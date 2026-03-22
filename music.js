@@ -141,15 +141,18 @@ const MusicPlayer = (() => {
 
     function generateMelody() {
         if (!isPlaying || !ctx) return;
-        const t = TRACKS[currentTrack], s = t.scale, now = ctx.currentTime;
+        const t = TRACKS[currentTrack], s = t.s, now = ctx.currentTime;
+        if (!s || !s.length) { melodyTimer = setTimeout(generateMelody, 500); return; }
         for (let i = 0; i < 8; i++) {
             const note = s[Math.floor(Math.random() * s.length)];
             const tm = now + (i * t.t / 1000), dur = t.t / 1000 * 0.8;
             playNote(note, tm, dur, t.w || 'sine', 0.35);
             if (Math.random() > 0.6) playNote(note * 1.5, tm, dur * 0.6, 'triangle', 0.12);
         }
-        playNote(s[0] / 2, now, t.t * 4 / 1000, 'triangle', 0.2);
-        playNote(s[4] / 2, now + t.t * 4 / 1000, t.t * 4 / 1000, 'triangle', 0.15);
+        const bassRoot = s[0] / 2;
+        const bassFifth = s[Math.min(4, s.length - 1)] / 2;
+        playNote(bassRoot, now, t.t * 4 / 1000, 'triangle', 0.2);
+        playNote(bassFifth, now + t.t * 4 / 1000, t.t * 4 / 1000, 'triangle', 0.15);
         melodyTimer = setTimeout(generateMelody, t.t * 8);
     }
 
