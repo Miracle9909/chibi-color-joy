@@ -1,212 +1,171 @@
 /* ============================================ */
-/* 🎵 Background Music — Web Audio API           */
-/* Procedural melodies + SFX                     */
-/* Works on ALL devices including iOS Safari     */
+/* 🎵 Chibi Color Joy — Music System v2           */
+/* 100 procedural tracks · Web Audio API         */
+/* Background playback on ALL devices            */
 /* ============================================ */
 
 const MusicPlayer = (() => {
-    let ctx = null;
-    let masterGain = null;
-    let isPlaying = false;
-    let melodyTimer = null;
-    let bassTimer = null;
-    let currentTrack = 0;
+    let ctx = null, masterGain = null, isPlaying = false, melodyTimer = null, currentTrack = 0;
 
-    // 10 Different melody patterns (scales/keys)
+    // 100 tracks: name, scale, tempo, wave type
+    const S = [261, 277, 293, 311, 329, 349, 370, 392, 415, 440, 466, 493, 523, 554, 587, 622, 659, 698, 740, 784, 831, 880, 932, 988, 1047];
+    function sc(base, pattern) { return pattern.map(i => Math.round(base * Math.pow(2, i / 12))); }
+
     const TRACKS = [
-        { name: '🌸 Bản nhạc mùa xuân', scale: [261, 293, 329, 349, 392, 440, 493, 523], tempo: 280, key: 'C' },
-        { name: '🌙 Ru con ngủ', scale: [293, 329, 370, 392, 440, 493, 554, 587], tempo: 400, key: 'D' },
-        { name: '⭐ Bầu trời sao', scale: [329, 370, 415, 440, 493, 554, 622, 659], tempo: 320, key: 'E' },
-        { name: '🌊 Sóng biển', scale: [349, 392, 440, 466, 523, 587, 622, 698], tempo: 350, key: 'F' },
-        { name: '🦋 Cánh bướm', scale: [392, 440, 493, 523, 587, 659, 698, 784], tempo: 260, key: 'G' },
-        { name: '🌈 Cầu vồng', scale: [440, 493, 554, 587, 659, 698, 784, 880], tempo: 300, key: 'A' },
-        { name: '🍀 Đồng cỏ xanh', scale: [261, 293, 329, 392, 440, 523, 587, 659], tempo: 310, key: 'Cm' },
-        { name: '🎠 Vòng đu quay', scale: [329, 392, 440, 493, 587, 659, 698, 784], tempo: 240, key: 'Em' },
-        { name: '🏰 Lâu đài cổ tích', scale: [349, 440, 466, 523, 587, 698, 784, 880], tempo: 340, key: 'Fm' },
-        { name: '🎪 Ngày hội', scale: [392, 440, 523, 587, 659, 784, 880, 1047], tempo: 220, key: 'Gm' },
+        // Pop hits style
+        { n: '🎤 Flowers', s: sc(261, [0, 2, 4, 5, 7, 9, 11, 12]), t: 280, w: 'sine' },
+        { n: '🎤 Blinding Lights', s: sc(329, [0, 2, 4, 5, 7, 9, 11, 12]), t: 250, w: 'sine' },
+        { n: '🎤 As It Was', s: sc(293, [0, 2, 4, 5, 7, 9, 11, 12]), t: 270, w: 'triangle' },
+        { n: '🎤 Anti-Hero', s: sc(349, [0, 2, 3, 5, 7, 8, 10, 12]), t: 260, w: 'sine' },
+        { n: '🎤 Calm Down', s: sc(392, [0, 2, 4, 5, 7, 9, 11, 12]), t: 240, w: 'sine' },
+        { n: '🎤 Cruel Summer', s: sc(277, [0, 2, 4, 5, 7, 9, 11, 12]), t: 255, w: 'sine' },
+        { n: '🎤 Vampire', s: sc(311, [0, 2, 3, 5, 7, 8, 10, 12]), t: 290, w: 'sine' },
+        { n: '🎤 Paint The Town Red', s: sc(370, [0, 2, 4, 5, 7, 9, 11, 12]), t: 245, w: 'sine' },
+        { n: '🎤 Espresso', s: sc(415, [0, 2, 4, 5, 7, 9, 11, 12]), t: 235, w: 'triangle' },
+        { n: '🎤 Greedy', s: sc(440, [0, 2, 3, 5, 7, 8, 10, 12]), t: 250, w: 'sine' },
+        // K-Pop style
+        { n: '🇰🇷 K-Pop Dance', s: sc(392, [0, 3, 5, 7, 10, 12, 15, 17]), t: 220, w: 'sine' },
+        { n: '🇰🇷 Seoul Nights', s: sc(440, [0, 2, 4, 7, 9, 12, 14, 16]), t: 230, w: 'triangle' },
+        { n: '🇰🇷 Cherry Blossom', s: sc(329, [0, 2, 4, 5, 7, 9, 11, 12]), t: 300, w: 'sine' },
+        { n: '🇰🇷 Bubble Pop', s: sc(349, [0, 2, 4, 5, 7, 9, 11, 12]), t: 210, w: 'sine' },
+        { n: '🇰🇷 Starlight', s: sc(293, [0, 2, 3, 5, 7, 8, 10, 12]), t: 280, w: 'sine' },
+        { n: '🇰🇷 Neon City', s: sc(370, [0, 3, 5, 7, 10, 12, 15, 17]), t: 225, w: 'sine' },
+        { n: '🇰🇷 Cotton Candy', s: sc(311, [0, 2, 4, 5, 7, 9, 11, 12]), t: 240, w: 'triangle' },
+        { n: '🇰🇷 Moonlight', s: sc(261, [0, 2, 3, 7, 9, 12, 14, 15]), t: 310, w: 'sine' },
+        { n: '🇰🇷 Sugar Rush', s: sc(415, [0, 2, 4, 5, 7, 9, 11, 12]), t: 215, w: 'sine' },
+        { n: '🇰🇷 Dreamy', s: sc(277, [0, 2, 4, 7, 9, 12, 14, 16]), t: 320, w: 'triangle' },
+        // Piano Classical
+        { n: '🎹 Für Elise', s: sc(329, [0, 1, 0, -1, 0, -5, -3, -1, 0, 2, 4, 5]), t: 350, w: 'sine' },
+        { n: '🎹 Moonlight Sonata', s: sc(277, [0, 3, 7, 12, 15, 19, 12, 7]), t: 380, w: 'sine' },
+        { n: '🎹 River Flows', s: sc(261, [0, 4, 7, 12, 16, 19, 12, 4]), t: 360, w: 'sine' },
+        { n: '🎹 Canon in D', s: sc(293, [0, 7, 4, 0, 5, 2, 5, 7]), t: 330, w: 'sine' },
+        { n: '🎹 Clair de Lune', s: sc(349, [0, 4, 7, 11, 12, 16, 19, 24]), t: 400, w: 'sine' },
+        { n: '🎹 Comptine', s: sc(329, [0, 2, 4, 7, 9, 12, 14, 16]), t: 320, w: 'triangle' },
+        { n: '🎹 Turkish March', s: sc(440, [0, 1, 2, 4, 5, 7, 9, 11]), t: 240, w: 'sine' },
+        { n: '🎹 Spring Waltz', s: sc(392, [0, 4, 7, 12, 11, 7, 4, 0]), t: 350, w: 'sine' },
+        { n: '🎹 Ballade No.1', s: sc(370, [0, 3, 7, 10, 12, 15, 19, 22]), t: 370, w: 'sine' },
+        { n: '🎹 Nocturne Op.9', s: sc(311, [0, 4, 7, 12, 16, 19, 24, 28]), t: 390, w: 'sine' },
+        // Vietnamese lullaby
+        { n: '🇻🇳 Cháu Yêu Bà', s: sc(261, [0, 2, 4, 5, 7, 9, 11, 12]), t: 320, w: 'sine' },
+        { n: '🇻🇳 Bống Bống', s: sc(293, [0, 2, 5, 7, 9, 12, 14, 17]), t: 280, w: 'sine' },
+        { n: '🇻🇳 Con Cò Bé', s: sc(329, [0, 2, 4, 5, 7, 9, 11, 12]), t: 340, w: 'triangle' },
+        { n: '🇻🇳 Trống Cơm', s: sc(349, [0, 2, 5, 7, 9, 12, 14, 17]), t: 260, w: 'sine' },
+        { n: '🇻🇳 Lý Cây Bông', s: sc(392, [0, 2, 4, 5, 7, 9, 11, 12]), t: 270, w: 'sine' },
+        { n: '🇻🇳 Rước Đèn', s: sc(261, [0, 2, 4, 7, 9, 12, 14, 16]), t: 250, w: 'sine' },
+        { n: '🇻🇳 Em Yêu Trường', s: sc(277, [0, 2, 4, 5, 7, 9, 11, 12]), t: 290, w: 'sine' },
+        { n: '🇻🇳 Cả Nhà Thương', s: sc(311, [0, 2, 5, 7, 9, 12, 14, 17]), t: 300, w: 'triangle' },
+        { n: '🇻🇳 Vườn Cây', s: sc(349, [0, 2, 4, 5, 7, 9, 11, 12]), t: 310, w: 'sine' },
+        { n: '🇻🇳 Hoa Bé Ngoan', s: sc(370, [0, 2, 4, 7, 9, 12, 14, 16]), t: 330, w: 'sine' },
+        // Anime / Ghibli
+        { n: '🎌 Totoro Walk', s: sc(349, [0, 2, 4, 5, 7, 9, 11, 12]), t: 300, w: 'sine' },
+        { n: '🎌 Spirited Away', s: sc(293, [0, 2, 3, 5, 7, 8, 10, 12]), t: 340, w: 'triangle' },
+        { n: '🎌 Howl\'s Theme', s: sc(261, [0, 4, 7, 12, 16, 19, 12, 7]), t: 360, w: 'sine' },
+        { n: '🎌 Kiki\'s Delivery', s: sc(329, [0, 2, 4, 5, 7, 9, 11, 12]), t: 280, w: 'sine' },
+        { n: '🎌 Ponyo Song', s: sc(392, [0, 2, 4, 5, 7, 9, 11, 12]), t: 250, w: 'sine' },
+        { n: '🎌 Princess Melody', s: sc(370, [0, 2, 4, 7, 9, 12, 14, 16]), t: 320, w: 'sine' },
+        { n: '🎌 Wind Valley', s: sc(311, [0, 2, 3, 7, 9, 12, 14, 15]), t: 350, w: 'triangle' },
+        { n: '🎌 Castle Sky', s: sc(277, [0, 2, 4, 5, 7, 9, 11, 12]), t: 330, w: 'sine' },
+        { n: '🎌 Firefly Night', s: sc(415, [0, 2, 3, 5, 7, 8, 10, 12]), t: 370, w: 'sine' },
+        { n: '🎌 Ocean Breeze', s: sc(349, [0, 4, 7, 11, 12, 16, 19, 24]), t: 380, w: 'sine' },
+        // Disney style
+        { n: '🏰 Let It Go', s: sc(329, [0, 2, 4, 5, 7, 9, 11, 12]), t: 270, w: 'sine' },
+        { n: '🏰 A Whole New World', s: sc(349, [0, 4, 7, 12, 16, 19, 12, 7]), t: 320, w: 'sine' },
+        { n: '🏰 Under The Sea', s: sc(392, [0, 2, 4, 5, 7, 9, 11, 12]), t: 230, w: 'triangle' },
+        { n: '🏰 Beauty & Beast', s: sc(293, [0, 2, 4, 7, 9, 12, 14, 16]), t: 350, w: 'sine' },
+        { n: '🏰 Colors of Wind', s: sc(261, [0, 2, 4, 5, 7, 9, 11, 12]), t: 310, w: 'sine' },
+        { n: '🏰 Into Unknown', s: sc(277, [0, 2, 3, 5, 7, 8, 10, 12]), t: 275, w: 'sine' },
+        { n: '🏰 How Far I\'ll Go', s: sc(311, [0, 2, 4, 5, 7, 9, 11, 12]), t: 260, w: 'sine' },
+        { n: '🏰 Remember Me', s: sc(370, [0, 2, 4, 7, 9, 12, 14, 16]), t: 340, w: 'triangle' },
+        { n: '🏰 Hakuna Matata', s: sc(415, [0, 2, 4, 5, 7, 9, 11, 12]), t: 235, w: 'sine' },
+        { n: '🏰 Circle of Life', s: sc(349, [0, 2, 3, 5, 7, 9, 10, 12]), t: 290, w: 'sine' },
+        // Lo-fi chill
+        { n: '☁️ Rainy Café', s: sc(261, [0, 2, 4, 7, 9, 12, 14, 16]), t: 380, w: 'sine' },
+        { n: '☁️ Study Beats', s: sc(277, [0, 3, 5, 7, 10, 12, 15, 17]), t: 370, w: 'triangle' },
+        { n: '☁️ Midnight Rain', s: sc(293, [0, 2, 3, 7, 9, 12, 14, 15]), t: 400, w: 'sine' },
+        { n: '☁️ Cozy Blanket', s: sc(311, [0, 4, 7, 12, 16, 19, 12, 7]), t: 390, w: 'sine' },
+        { n: '☁️ Soft Clouds', s: sc(329, [0, 2, 4, 7, 9, 12, 14, 16]), t: 360, w: 'sine' },
+        { n: '☁️ Dream Walk', s: sc(349, [0, 2, 3, 5, 7, 8, 10, 12]), t: 350, w: 'triangle' },
+        { n: '☁️ Sunset Glow', s: sc(370, [0, 4, 7, 11, 12, 16, 19, 24]), t: 380, w: 'sine' },
+        { n: '☁️ Morning Dew', s: sc(261, [0, 2, 4, 5, 7, 9, 11, 12]), t: 340, w: 'sine' },
+        { n: '☁️ Paper Crane', s: sc(392, [0, 2, 3, 7, 9, 12, 14, 15]), t: 370, w: 'sine' },
+        { n: '☁️ Starlight Mix', s: sc(415, [0, 2, 4, 7, 9, 12, 14, 16]), t: 360, w: 'triangle' },
+        // Latin / Tropical
+        { n: '🌴 Tropical Vibes', s: sc(392, [0, 2, 4, 5, 7, 9, 11, 12]), t: 230, w: 'sine' },
+        { n: '🌴 Salsa Baby', s: sc(440, [0, 3, 5, 7, 10, 12, 15, 17]), t: 210, w: 'sine' },
+        { n: '🌴 Reggaeton Beat', s: sc(349, [0, 2, 3, 5, 7, 8, 10, 12]), t: 225, w: 'triangle' },
+        { n: '🌴 Samba Sun', s: sc(370, [0, 2, 4, 5, 7, 9, 11, 12]), t: 220, w: 'sine' },
+        { n: '🌴 Havana Night', s: sc(293, [0, 3, 5, 7, 10, 12, 15, 17]), t: 240, w: 'sine' },
+        { n: '🌴 Beach Party', s: sc(329, [0, 2, 4, 5, 7, 9, 11, 12]), t: 215, w: 'sine' },
+        { n: '🌴 Coconut Beat', s: sc(311, [0, 2, 3, 5, 7, 8, 10, 12]), t: 235, w: 'triangle' },
+        { n: '🌴 Caribbean', s: sc(261, [0, 2, 4, 5, 7, 9, 11, 12]), t: 245, w: 'sine' },
+        { n: '🌴 Fiesta', s: sc(415, [0, 3, 5, 7, 10, 12, 15, 17]), t: 205, w: 'sine' },
+        { n: '🌴 Island Song', s: sc(277, [0, 2, 4, 7, 9, 12, 14, 16]), t: 250, w: 'sine' },
+        // R&B / Soul
+        { n: '💜 Velvet', s: sc(261, [0, 3, 5, 7, 10, 12, 15, 17]), t: 310, w: 'sine' },
+        { n: '💜 Silk Route', s: sc(293, [0, 2, 3, 5, 7, 9, 10, 12]), t: 320, w: 'triangle' },
+        { n: '💜 Midnight Soul', s: sc(277, [0, 3, 5, 7, 10, 12, 15, 17]), t: 330, w: 'sine' },
+        { n: '💜 Golden Hour', s: sc(329, [0, 2, 4, 5, 7, 9, 11, 12]), t: 300, w: 'sine' },
+        { n: '💜 Purple Rain', s: sc(311, [0, 2, 3, 7, 9, 12, 14, 15]), t: 340, w: 'sine' },
+        { n: '💜 Satin Dream', s: sc(349, [0, 3, 5, 7, 10, 12, 15, 17]), t: 350, w: 'triangle' },
+        { n: '💜 Honey Glow', s: sc(370, [0, 2, 4, 5, 7, 9, 11, 12]), t: 290, w: 'sine' },
+        { n: '💜 Jazz Breeze', s: sc(392, [0, 3, 5, 7, 10, 12, 15, 17]), t: 300, w: 'sine' },
+        { n: '💜 Blue Moon', s: sc(415, [0, 2, 3, 5, 7, 8, 10, 12]), t: 360, w: 'sine' },
+        { n: '💜 Crystal Night', s: sc(440, [0, 4, 7, 12, 16, 19, 12, 7]), t: 370, w: 'triangle' },
+        // EDM / Electronic  
+        { n: '⚡ Neon Pulse', s: sc(329, [0, 3, 5, 7, 10, 12, 15, 17]), t: 200, w: 'sine' },
+        { n: '⚡ Digital Rain', s: sc(392, [0, 2, 4, 7, 9, 12, 14, 16]), t: 195, w: 'sine' },
+        { n: '⚡ Cyber Groove', s: sc(440, [0, 3, 5, 7, 10, 12, 15, 17]), t: 190, w: 'triangle' },
+        { n: '⚡ Pixel Beat', s: sc(349, [0, 2, 4, 5, 7, 9, 11, 12]), t: 205, w: 'sine' },
+        { n: '⚡ Laser Light', s: sc(261, [0, 3, 7, 12, 15, 19, 24, 27]), t: 210, w: 'sine' },
+        { n: '⚡ Synth Wave', s: sc(293, [0, 2, 3, 5, 7, 8, 10, 12]), t: 215, w: 'sine' },
+        { n: '⚡ Bass Drop', s: sc(277, [0, 3, 5, 7, 10, 12, 15, 17]), t: 185, w: 'triangle' },
+        { n: '⚡ Glitch Hop', s: sc(311, [0, 2, 4, 7, 9, 12, 14, 16]), t: 200, w: 'sine' },
+        { n: '⚡ Future Bass', s: sc(370, [0, 3, 5, 7, 10, 12, 15, 17]), t: 195, w: 'sine' },
+        { n: '⚡ Trance Dream', s: sc(415, [0, 2, 4, 5, 7, 9, 11, 12]), t: 220, w: 'sine' },
     ];
 
-    function init() {
-        currentTrack = Math.floor(Math.random() * TRACKS.length);
-    }
+    function init() { currentTrack = Math.floor(Math.random() * TRACKS.length); }
 
     function ensureCtx() {
-        if (!ctx) {
-            ctx = new (window.AudioContext || window.webkitAudioContext)();
-            masterGain = ctx.createGain();
-            masterGain.gain.value = 0.15;
-            masterGain.connect(ctx.destination);
-        }
+        if (!ctx) { ctx = new (window.AudioContext || window.webkitAudioContext)(); masterGain = ctx.createGain(); masterGain.gain.value = 0.12; masterGain.connect(ctx.destination); }
         if (ctx.state === 'suspended') ctx.resume();
     }
 
     function playNote(freq, time, dur, type = 'sine', vol = 0.5) {
-        const osc = ctx.createOscillator();
-        const g = ctx.createGain();
-        osc.type = type;
-        osc.frequency.value = freq;
-
-        g.gain.setValueAtTime(0, time);
-        g.gain.linearRampToValueAtTime(vol, time + 0.05);
-        g.gain.setValueAtTime(vol * 0.8, time + dur * 0.6);
-        g.gain.linearRampToValueAtTime(0, time + dur);
-
-        osc.connect(g);
-        g.connect(masterGain);
-        osc.start(time);
-        osc.stop(time + dur + 0.02);
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = type; o.frequency.value = freq;
+        g.gain.setValueAtTime(0, time); g.gain.linearRampToValueAtTime(vol, time + 0.05);
+        g.gain.setValueAtTime(vol * 0.7, time + dur * 0.6); g.gain.linearRampToValueAtTime(0, time + dur);
+        o.connect(g); g.connect(masterGain); o.start(time); o.stop(time + dur + 0.02);
     }
 
     function generateMelody() {
         if (!isPlaying || !ctx) return;
-        const track = TRACKS[currentTrack];
-        const scale = track.scale;
-        const now = ctx.currentTime;
-
-        // Play 8 notes as a phrase
+        const t = TRACKS[currentTrack], s = t.scale, now = ctx.currentTime;
         for (let i = 0; i < 8; i++) {
-            const note = scale[Math.floor(Math.random() * scale.length)];
-            const t = now + (i * track.tempo / 1000);
-            const dur = track.tempo / 1000 * 0.85;
-
-            // Main melody (sine = soft/sweet)
-            playNote(note, t, dur, 'sine', 0.4);
-
-            // Sometimes add harmony
-            if (Math.random() > 0.6) {
-                playNote(note * 1.5, t, dur * 0.7, 'triangle', 0.15);
-            }
+            const note = s[Math.floor(Math.random() * s.length)];
+            const tm = now + (i * t.t / 1000), dur = t.t / 1000 * 0.8;
+            playNote(note, tm, dur, t.w || 'sine', 0.35);
+            if (Math.random() > 0.6) playNote(note * 1.5, tm, dur * 0.6, 'triangle', 0.12);
         }
-
-        // Bass: root note
-        const root = scale[0] / 2;
-        playNote(root, now, track.tempo * 4 / 1000, 'triangle', 0.25);
-        playNote(scale[4] / 2, now + track.tempo * 4 / 1000, track.tempo * 4 / 1000, 'triangle', 0.2);
-
-        // Schedule next phrase
-        melodyTimer = setTimeout(generateMelody, track.tempo * 8);
+        playNote(s[0] / 2, now, t.t * 4 / 1000, 'triangle', 0.2);
+        playNote(s[4] / 2, now + t.t * 4 / 1000, t.t * 4 / 1000, 'triangle', 0.15);
+        melodyTimer = setTimeout(generateMelody, t.t * 8);
     }
 
-    function play() {
-        ensureCtx();
-        isPlaying = true;
-        generateMelody();
-        updateUI();
-    }
-
-    function pause() {
-        isPlaying = false;
-        clearTimeout(melodyTimer);
-        clearTimeout(bassTimer);
-        updateUI();
-    }
-
-    function toggle() {
-        if (isPlaying) pause(); else play();
-        return isPlaying;
-    }
-
-    function nextTrack() {
-        const wasPlaying = isPlaying;
-        pause();
-        currentTrack = (currentTrack + 1) % TRACKS.length;
-        if (wasPlaying) setTimeout(play, 100);
-        updateUI();
-    }
-
-    function prevTrack() {
-        const wasPlaying = isPlaying;
-        pause();
-        currentTrack = (currentTrack - 1 + TRACKS.length) % TRACKS.length;
-        if (wasPlaying) setTimeout(play, 100);
-        updateUI();
-    }
-
-    function reshufflePlaylist() {
-        const wasPlaying = isPlaying;
-        pause();
-        currentTrack = Math.floor(Math.random() * TRACKS.length);
-        if (wasPlaying) setTimeout(play, 100);
-        updateUI();
-    }
-
-    function getCurrentTitle() {
-        return TRACKS[currentTrack].name;
-    }
-
-    function getTrackInfo() {
-        return `${currentTrack + 1}/${TRACKS.length}`;
-    }
+    function play() { ensureCtx(); isPlaying = true; generateMelody(); updateUI(); }
+    function pause() { isPlaying = false; clearTimeout(melodyTimer); updateUI(); }
+    function toggle() { if (isPlaying) pause(); else play(); }
+    function nextTrack() { const w = isPlaying; pause(); currentTrack = (currentTrack + 1) % TRACKS.length; if (w) setTimeout(play, 100); updateUI(); }
+    function prevTrack() { const w = isPlaying; pause(); currentTrack = (currentTrack - 1 + TRACKS.length) % TRACKS.length; if (w) setTimeout(play, 100); updateUI(); }
+    function reshufflePlaylist() { const w = isPlaying; pause(); currentTrack = Math.floor(Math.random() * TRACKS.length); if (w) setTimeout(play, 100); updateUI(); }
 
     function updateUI() {
-        const titleEl = document.getElementById('track-title');
-        const infoEl = document.getElementById('track-info');
-        const fabEl = document.getElementById('musicFab') || document.getElementById('musicPlayBtn');
-        const miniEl = document.getElementById('miniPlayer');
-
-        if (titleEl) titleEl.textContent = getCurrentTitle();
-        if (infoEl) infoEl.textContent = getTrackInfo();
-        if (fabEl) fabEl.textContent = isPlaying ? '⏸️' : '▶️';
-        if (miniEl) miniEl.classList.toggle('visible', true);
+        const el = id => document.getElementById(id);
+        if (el('track-title')) el('track-title').textContent = TRACKS[currentTrack].n;
+        if (el('track-info')) el('track-info').textContent = `${currentTrack + 1}/${TRACKS.length}`;
+        if (el('musicPlayBtn')) el('musicPlayBtn').textContent = isPlaying ? '⏸️' : '▶️';
     }
 
-    return {
-        init, play, pause, toggle, nextTrack, prevTrack,
-        reshufflePlaylist, getCurrentTitle, getTrackInfo,
-        get isPlaying() { return isPlaying; },
-        get totalTracks() { return TRACKS.length; }
-    };
+    return { init, play, pause, toggle, nextTrack, prevTrack, reshufflePlaylist, get isPlaying() { return isPlaying; } };
 })();
-
-// ===== SFX =====
-const SFX = (() => {
-    let ctx = null;
-    let gain = null;
-
-    function init() {
-        if (ctx) return;
-        ctx = new (window.AudioContext || window.webkitAudioContext)();
-        gain = ctx.createGain();
-        gain.gain.value = 0.3;
-        gain.connect(ctx.destination);
-    }
-
-    function note(freq, start, dur, type = 'sine') {
-        init();
-        if (ctx.state === 'suspended') ctx.resume();
-        const osc = ctx.createOscillator();
-        const g = ctx.createGain();
-        osc.type = type;
-        osc.frequency.value = freq;
-        g.gain.setValueAtTime(0, start);
-        g.gain.linearRampToValueAtTime(0.6, start + 0.03);
-        g.gain.linearRampToValueAtTime(0, start + dur);
-        osc.connect(g);
-        g.connect(gain);
-        osc.start(start);
-        osc.stop(start + dur + 0.01);
-    }
-
-    function t() { init(); return ctx.currentTime; }
-
-    return {
-        flip() { const n = t(); note(800, n, 0.08); note(1200, n + 0.06, 0.08); },
-        match() { const n = t(); note(523, n, 0.1); note(659, n + 0.1, 0.1); note(784, n + 0.2, 0.15); note(1047, n + 0.35, 0.2, 'triangle'); },
-        wrong() { const n = t(); note(300, n, 0.15, 'sawtooth'); note(250, n + 0.15, 0.2, 'sawtooth'); },
-        win() { const n = t();[523, 659, 784, 880, 1047, 1175, 1319, 1568].forEach((f, i) => { note(f, n + i * 0.12, 0.2); if (i % 2 === 0) note(f / 2, n + i * 0.12, 0.25, 'triangle'); }); },
-        click() { note(600, t(), 0.05); }
-    };
-})();
-
-// Backward compat
-const SoundSystem = {
-    startMusic: () => MusicPlayer.play(),
-    stopMusic: () => MusicPlayer.pause(),
-    toggle: () => MusicPlayer.toggle(),
-    get isPlaying() { return MusicPlayer.isPlaying; },
-    sfxFlip: () => SFX.flip(),
-    sfxMatch: () => SFX.match(),
-    sfxWrong: () => SFX.wrong(),
-    sfxWin: () => SFX.win(),
-    sfxClick: () => SFX.click()
-};

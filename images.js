@@ -1,381 +1,153 @@
-/* Chibi Color Joy — Detailed SVG Library v2 */
-/* Inspired by cute chibi coloring pages for kids */
+/* Chibi Color Joy — 100+ SVG Image Library */
+/* Procedural generator for compact code */
 
-function svgWrap(inner, vb = '0 0 200 200') {
-    return `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+const S = '#333', W = 'white';
+function sv(inner, vb = '0 0 200 200') { return `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`; }
+function c(cx, cy, r, id) { return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${W}" stroke="${S}" stroke-width="2" data-region="${id}"/>`; }
+function e(cx, cy, rx, ry, id, rot = '') { return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${W}" stroke="${S}" stroke-width="2"${rot ? ` transform="rotate(${rot} ${cx} ${cy})"` : ''} data-region="${id}"/>`; }
+function r(x, y, w, h, id, rx = 0) { return `<rect x="${x}" y="${y}" width="${w}" height="${h}"${rx ? ` rx="${rx}"` : ''}  fill="${W}" stroke="${S}" stroke-width="2" data-region="${id}"/>`; }
+function p(d, id) { return `<path d="${d}" fill="${W}" stroke="${S}" stroke-width="2" data-region="${id}"/>`; }
+function dot(cx, cy, r = 3) { return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${S}"/>`; }
+function line(d) { return `<path d="${d}" fill="none" stroke="${S}" stroke-width="1.5"/>`; }
+function smile(cx, cy, w = 5) { return line(`M${cx - w} ${cy} Q${cx} ${cy + w} ${cx + w} ${cy}`); }
+function eyes(lx, ly, rx, ry, r = 3) { return dot(lx, ly, r) + dot(rx, ry, r); }
+function grass() { return `<line x1="10" y1="190" x2="190" y2="190" stroke="#6B8" stroke-width="2"/>` + p('M15 190Q22 175 29 190Q36 175 43 190', 'g1') + p('M150 190Q157 175 164 190Q171 175 178 190', 'g2'); }
+function stars() { return c(25, 20, 3, 's1') + c(170, 30, 4, 's2') + c(30, 120, 3, 's3') + c(165, 15, 3, 's4'); }
+
+// Helper: chibi face
+function face(cx, cy, r, el, er) {
+    return c(cx, cy, r, 'head') + c(cx - el, cy - 5, 5, 'eyeL') + c(cx + er, cy - 5, 5, 'eyeR')
+        + eyes(cx - el, cy - 5, cx + er, cy - 5, 2) + e(cx, cy + 8, 4, 3, 'nose') + smile(cx, cy + 14)
+        + c(cx - r + 5, cy + 5, 4, 'chkL') + c(cx + r - 5, cy + 5, 4, 'chkR');
 }
-
-const S = '#333'; // stroke color
-const W = 'white'; // default fill
 
 const IMAGE_LIBRARY = {
     animals: {
         name: '🐾 Động vật', images: [
-            {
-                id: 'kitten', name: 'Mèo con dễ thương', svg: svgWrap(`
-                <circle cx="60" cy="42" r="15" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="ear-l"/>
-                <circle cx="140" cy="42" r="15" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="ear-r"/>
-                <circle cx="60" cy="42" r="7" fill="${W}" stroke="${S}" stroke-width="1" data-region="ear-in-l"/>
-                <circle cx="140" cy="42" r="7" fill="${W}" stroke="${S}" stroke-width="1" data-region="ear-in-r"/>
-                <circle cx="100" cy="80" r="42" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="head"/>
-                <circle cx="82" cy="72" r="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-l"/>
-                <circle cx="118" cy="72" r="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-r"/>
-                <circle cx="82" cy="72" r="3" fill="${S}"/>
-                <circle cx="118" cy="72" r="3" fill="${S}"/>
-                <ellipse cx="100" cy="88" rx="5" ry="3.5" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="nose"/>
-                <path d="M95 92 Q100 98 105 92" fill="none" stroke="${S}" stroke-width="1.5"/>
-                <path d="M60 80 L35 72 M60 84 L33 84 M60 88 L35 96" stroke="${S}" stroke-width="1" fill="none"/>
-                <path d="M140 80 L165 72 M140 84 L167 84 M140 88 L165 96" stroke="${S}" stroke-width="1" fill="none"/>
-                <ellipse cx="100" cy="148" rx="35" ry="28" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="body"/>
-                <path d="M70 130 Q50 135 55 155 Q58 148 70 145" fill="${W}" stroke="${S}" stroke-width="2" data-region="paw-l"/>
-                <path d="M130 130 Q150 135 145 155 Q142 148 130 145" fill="${W}" stroke="${S}" stroke-width="2" data-region="paw-r"/>
-                <ellipse cx="80" cy="172" rx="14" ry="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="foot-l"/>
-                <ellipse cx="120" cy="172" rx="14" ry="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="foot-r"/>
-                <path d="M135 148 Q155 130 165 145 Q168 155 155 162 Q145 158 138 155" fill="${W}" stroke="${S}" stroke-width="2" data-region="tail"/>
-                <path d="M85 100 Q90 105 95 100" fill="none" stroke="${S}" stroke-width="1"/>
-                <ellipse cx="100" cy="140" rx="8" ry="5" fill="${W}" stroke="${S}" stroke-width="1" data-region="belly"/>
-            `)
-            },
-            {
-                id: 'puppy', name: 'Cún cưng', svg: svgWrap(`
-                <ellipse cx="58" cy="50" rx="22" ry="32" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="ear-l" transform="rotate(-15 58 50)"/>
-                <ellipse cx="142" cy="50" rx="22" ry="32" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="ear-r" transform="rotate(15 142 50)"/>
-                <circle cx="100" cy="82" r="42" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="head"/>
-                <circle cx="84" cy="75" r="7" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-l"/>
-                <circle cx="116" cy="75" r="7" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-r"/>
-                <circle cx="84" cy="75" r="3" fill="${S}"/>
-                <circle cx="116" cy="75" r="3" fill="${S}"/>
-                <ellipse cx="100" cy="90" rx="12" ry="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="muzzle"/>
-                <ellipse cx="100" cy="87" rx="5" ry="3" fill="${S}"/>
-                <path d="M96 96 Q100 102 104 96" fill="none" stroke="${S}" stroke-width="1.5"/>
-                <circle cx="76" cy="88" r="6" fill="${W}" stroke="${S}" stroke-width="1" data-region="cheek-l"/>
-                <circle cx="124" cy="88" r="6" fill="${W}" stroke="${S}" stroke-width="1" data-region="cheek-r"/>
-                <ellipse cx="100" cy="150" rx="36" ry="30" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="body"/>
-                <ellipse cx="72" cy="160" rx="12" ry="16" fill="${W}" stroke="${S}" stroke-width="2" data-region="leg-l"/>
-                <ellipse cx="128" cy="160" rx="12" ry="16" fill="${W}" stroke="${S}" stroke-width="2" data-region="leg-r"/>
-                <path d="M136 140 Q160 125 155 148 Q152 156 140 152" fill="${W}" stroke="${S}" stroke-width="2" data-region="tail"/>
-                <ellipse cx="100" cy="145" rx="10" ry="6" fill="${W}" stroke="${S}" stroke-width="1" data-region="collar"/>
-                <circle cx="100" cy="152" r="4" fill="${W}" stroke="${S}" stroke-width="1" data-region="tag"/>
-            `)
-            },
-            {
-                id: 'bunny2', name: 'Thỏ trong vườn', svg: svgWrap(`
-                <ellipse cx="82" cy="28" rx="10" ry="32" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="ear-l"/>
-                <ellipse cx="118" cy="28" rx="10" ry="32" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="ear-r"/>
-                <ellipse cx="82" cy="25" rx="5" ry="22" fill="${W}" stroke="${S}" stroke-width="1" data-region="ear-in-l"/>
-                <ellipse cx="118" cy="25" rx="5" ry="22" fill="${W}" stroke="${S}" stroke-width="1" data-region="ear-in-r"/>
-                <circle cx="100" cy="88" r="35" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="head"/>
-                <circle cx="86" cy="82" r="6" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-l"/>
-                <circle cx="114" cy="82" r="6" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-r"/>
-                <circle cx="86" cy="82" r="2.5" fill="${S}"/>
-                <circle cx="114" cy="82" r="2.5" fill="${S}"/>
-                <circle cx="100" cy="94" r="3" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="nose"/>
-                <circle cx="80" cy="96" r="5" fill="${W}" stroke="${S}" stroke-width="1" data-region="cheek-l"/>
-                <circle cx="120" cy="96" r="5" fill="${W}" stroke="${S}" stroke-width="1" data-region="cheek-r"/>
-                <ellipse cx="100" cy="148" rx="30" ry="25" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="body"/>
-                <circle cx="100" cy="172" r="10" fill="${W}" stroke="${S}" stroke-width="2" data-region="tail-puff"/>
-                <ellipse cx="78" cy="170" rx="14" ry="7" fill="${W}" stroke="${S}" stroke-width="2" data-region="foot-l"/>
-                <ellipse cx="122" cy="170" rx="14" ry="7" fill="${W}" stroke="${S}" stroke-width="2" data-region="foot-r"/>
-                <path d="M30 185 Q35 170 45 175 Q50 178 48 185" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="flower1"/>
-                <path d="M160 182 Q165 168 172 172 Q178 175 175 185" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="flower2"/>
-                <path d="M20 190 L180 190" stroke="#8B8" stroke-width="2" fill="none"/>
-                <path d="M15 190 Q20 180 25 190 Q30 180 35 190" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="grass1"/>
-                <path d="M155 190 Q160 178 165 190 Q170 178 175 190" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="grass2"/>
-            `)
-            },
-            {
-                id: 'panda2', name: 'Gấu trúc ăn tre', svg: svgWrap(`
-                <circle cx="62" cy="38" r="16" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="ear-l"/>
-                <circle cx="138" cy="38" r="16" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="ear-r"/>
-                <circle cx="100" cy="78" r="40" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="head"/>
-                <ellipse cx="80" cy="72" rx="14" ry="10" fill="${W}" stroke="${S}" stroke-width="2" data-region="patch-l"/>
-                <ellipse cx="120" cy="72" rx="14" ry="10" fill="${W}" stroke="${S}" stroke-width="2" data-region="patch-r"/>
-                <circle cx="80" cy="72" r="4" fill="${S}"/>
-                <circle cx="120" cy="72" r="4" fill="${S}"/>
-                <circle cx="78" cy="70" r="1.5" fill="${W}"/>
-                <circle cx="118" cy="70" r="1.5" fill="${W}"/>
-                <ellipse cx="100" cy="88" rx="6" ry="4" fill="${S}"/>
-                <path d="M94 94 Q100 100 106 94" fill="none" stroke="${S}" stroke-width="1.5"/>
-                <ellipse cx="100" cy="148" rx="38" ry="30" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="body"/>
-                <ellipse cx="100" cy="145" rx="22" ry="15" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="belly"/>
-                <ellipse cx="64" cy="145" rx="12" ry="18" fill="${W}" stroke="${S}" stroke-width="2" data-region="arm-l"/>
-                <ellipse cx="136" cy="145" rx="12" ry="18" fill="${W}" stroke="${S}" stroke-width="2" data-region="arm-r"/>
-                <ellipse cx="82" cy="175" rx="14" ry="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="foot-l"/>
-                <ellipse cx="118" cy="175" rx="14" ry="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="foot-r"/>
-                <rect x="142" y="100" width="6" height="80" rx="3" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="bamboo1"/>
-                <rect x="155" y="90" width="5" height="90" rx="2" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="bamboo2"/>
-                <path d="M145 110 L155 105 M145 130 L155 125 M145 150 L155 145" stroke="#8B8" stroke-width="1" fill="none"/>
-            `)
-            },
-            {
-                id: 'elephant', name: 'Voi con', svg: svgWrap(`
-                <path d="M45 70 Q30 50 35 30 Q40 15 55 25 Q60 30 60 50 L60 70Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="ear-l"/>
-                <path d="M155 70 Q170 50 165 30 Q160 15 145 25 Q140 30 140 50 L140 70Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="ear-r"/>
-                <circle cx="100" cy="75" r="42" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="head"/>
-                <circle cx="82" cy="65" r="6" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-l"/>
-                <circle cx="118" cy="65" r="6" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-r"/>
-                <circle cx="82" cy="65" r="2.5" fill="${S}"/>
-                <circle cx="118" cy="65" r="2.5" fill="${S}"/>
-                <path d="M100 85 Q95 100 92 120 Q90 130 95 135 Q100 130 105 135 Q110 130 108 120 Q105 100 100 85Z" fill="${W}" stroke="${S}" stroke-width="2" data-region="trunk"/>
-                <ellipse cx="100" cy="155" rx="40" ry="28" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="body"/>
-                <rect x="72" y="170" width="16" height="22" rx="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="leg-fl"/>
-                <rect x="112" y="170" width="16" height="22" rx="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="leg-fr"/>
-                <path d="M135 155 Q155 150 158 165 Q160 175 150 178" fill="${W}" stroke="${S}" stroke-width="2" data-region="tail"/>
-            `)
-            },
+            { id: 'a1', name: 'Mèo con', svg: sv(c(60, 40, 14, 'earL') + c(140, 40, 14, 'earR') + face(100, 75, 38, 16, 16) + e(100, 148, 34, 28, 'body') + e(72, 170, 12, 7, 'ftL') + e(128, 170, 12, 7, 'ftR') + p('M135 145Q155 130 160 150Q158 160 145 155', 'tail') + line('M62 70L38 62M62 74L35 74M62 78L38 86') + line('M138 70L162 62M138 74L165 74M138 78L162 86') + e(100, 140, 8, 5, 'belly')) },
+            { id: 'a2', name: 'Cún cưng', svg: sv(e(58, 50, 20, 30, 'earL', '-15') + e(142, 50, 20, 30, 'earR', '15') + face(100, 80, 38, 14, 14) + e(100, 85, 10, 7, 'muz') + e(100, 148, 35, 28, 'body') + e(72, 168, 12, 14, 'legL') + e(128, 168, 12, 14, 'legR') + p('M135 140Q155 125 150 148', 'tail') + e(100, 142, 8, 5, 'collar')) },
+            { id: 'a3', name: 'Thỏ hồng', svg: sv(e(82, 25, 9, 30, 'earL') + e(118, 25, 9, 30, 'earR') + e(82, 22, 4, 20, 'earIL') + e(118, 22, 4, 20, 'earIR') + face(100, 82, 34, 12, 12) + e(100, 145, 28, 22, 'body') + c(100, 168, 9, 'tail') + e(78, 165, 12, 6, 'ftL') + e(122, 165, 12, 6, 'ftR') + grass()) },
+            { id: 'a4', name: 'Gấu trúc', svg: sv(c(62, 38, 15, 'earL') + c(138, 38, 15, 'earR') + face(100, 75, 38, 18, 18) + e(82, 70, 12, 9, 'patchL') + e(118, 70, 12, 9, 'patchR') + e(100, 148, 36, 28, 'body') + e(100, 142, 20, 13, 'belly') + e(66, 142, 11, 16, 'armL') + e(134, 142, 11, 16, 'armR') + e(82, 172, 12, 7, 'ftL') + e(118, 172, 12, 7, 'ftR')) },
+            { id: 'a5', name: 'Voi con', svg: sv(p('M48 68Q32 48 42 28Q50 18 60 28L60 68Z', 'earL') + p('M152 68Q168 48 158 28Q150 18 140 28L140 68Z', 'earR') + face(100, 72, 40, 16, 16) + p('M100 85Q96 100 93 118Q91 128 96 132Q100 128 104 132Q108 128 106 118Q104 100 100 85Z', 'trunk') + e(100, 152, 38, 27, 'body') + r(74, 168, 14, 20, 'legL', 7) + r(112, 168, 14, 20, 'legR', 7)) },
+            { id: 'a6', name: 'Cáo nhỏ', svg: sv(p('M60 45L75 15L90 45Z', 'earL') + p('M110 45L125 15L140 45Z', 'earR') + face(100, 72, 36, 14, 14) + p('M100 82L95 90L105 90Z', 'noseT') + e(100, 148, 32, 26, 'body') + p('M130 148Q160 130 165 152Q162 162 148 158', 'tail') + e(100, 135, 18, 10, 'chest') + e(76, 168, 10, 6, 'ftL') + e(124, 168, 10, 6, 'ftR')) },
+            { id: 'a7', name: 'Gấu nâu', svg: sv(c(62, 42, 14, 'earL') + c(138, 42, 14, 'earR') + c(62, 42, 6, 'earIL') + c(138, 42, 6, 'earIR') + face(100, 75, 38, 14, 14) + e(100, 148, 36, 28, 'body') + e(100, 140, 18, 12, 'belly') + e(68, 148, 10, 16, 'armL') + e(132, 148, 10, 16, 'armR') + e(82, 172, 12, 7, 'ftL') + e(118, 172, 12, 7, 'ftR')) },
+            { id: 'a8', name: 'Hươu sao', svg: sv(p('M78 30L70 5L85 25Z', 'antL') + p('M122 30L130 5L115 25Z', 'antR') + c(80, 42, 10, 'earL') + c(120, 42, 10, 'earR') + face(100, 68, 30, 12, 12) + e(100, 130, 28, 25, 'body') + r(78, 150, 12, 30, 'legFL', 6) + r(110, 150, 12, 30, 'legFR', 6) + c(85, 55, 3, 'spot1') + c(115, 55, 3, 'spot2') + c(95, 45, 3, 'spot3') + grass()) },
+            { id: 'a9', name: 'Cá heo', svg: sv(e(100, 80, 55, 30, 'body') + p('M55 70Q40 50 55 55', 'fin') + p('M145 80Q165 65 155 85', 'tail') + c(75, 75, 4, 'eye') + dot(75, 75, 2) + e(100, 95, 8, 4, 'belly') + p('M80 88Q90 95 100 88', 'smile') + c(40, 30, 3, 's1') + c(160, 40, 3, 's2') + c(50, 130, 3, 's3'), '0 0 200 160') },
+            { id: 'a10', name: 'Chim cánh cụt', svg: sv(c(100, 55, 30, 'head') + e(100, 125, 28, 38, 'body') + e(100, 120, 16, 25, 'belly') + c(90, 50, 5, 'eyeL') + c(110, 50, 5, 'eyeR') + eyes(90, 50, 110, 50, 2) + p('M95 62L100 70L105 62Z', 'beak') + p('M72 105L55 130L72 125', 'wingL') + p('M128 105L145 130L128 125', 'wingR') + e(90, 160, 8, 5, 'ftL') + e(110, 160, 8, 5, 'ftR') + c(100, 108, 3, 'bow')) },
+            { id: 'a11', name: 'Ong vàng', svg: sv(e(100, 60, 18, 15, 'head') + c(90, 55, 4, 'eyeL') + c(110, 55, 4, 'eyeR') + eyes(90, 55, 110, 55, 2) + smile(100, 68) + p('M80 40Q70 20 65 15', 'antL') + p('M120 40Q130 20 135 15', 'antR') + c(65, 15, 4, 'antTL') + c(135, 15, 4, 'antTR') + e(100, 108, 25, 30, 'body') + r(80, 92, 40, 8, 'str1', 3) + r(80, 108, 40, 8, 'str2', 3) + r(80, 124, 40, 8, 'str3', 3) + p('M75 95Q45 80 50 60Q55 50 65 60L75 80', 'wingL') + p('M125 95Q155 80 150 60Q145 50 135 60L125 80', 'wingR')) },
+            { id: 'a12', name: 'Bọ rùa', svg: sv(c(100, 55, 18, 'head') + eyes(92, 52, 108, 52, 2) + e(100, 110, 35, 35, 'body') + line('M100 75L100 145') + c(82, 95, 5, 'dot1') + c(118, 95, 5, 'dot2') + c(85, 115, 5, 'dot3') + c(115, 115, 5, 'dot4') + c(90, 135, 4, 'dot5') + c(110, 135, 4, 'dot6') + e(70, 110, 6, 3, 'legL1') + e(130, 110, 6, 3, 'legR1') + e(72, 125, 6, 3, 'legL2') + e(128, 125, 6, 3, 'legR2')) },
         ]
     },
     princess: {
         name: '👸 Công chúa', images: [
-            {
-                id: 'princess2', name: 'Công chúa hoa', svg: svgWrap(`
-                <path d="M78 25 L88 5 L100 20 L112 5 L122 25" fill="${W}" stroke="${S}" stroke-width="2" data-region="crown-top"/>
-                <rect x="75" y="25" width="50" height="12" rx="3" fill="${W}" stroke="${S}" stroke-width="2" data-region="crown-band"/>
-                <circle cx="88" cy="31" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="gem1"/>
-                <circle cx="100" cy="31" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="gem2"/>
-                <circle cx="112" cy="31" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="gem3"/>
-                <path d="M68 50 Q55 35 65 42 Q60 55 68 60" fill="${W}" stroke="${S}" stroke-width="2" data-region="hair-l"/>
-                <path d="M132 50 Q145 35 135 42 Q140 55 132 60" fill="${W}" stroke="${S}" stroke-width="2" data-region="hair-r"/>
-                <path d="M65 55 Q58 70 62 90" fill="${W}" stroke="${S}" stroke-width="2" data-region="hair-long-l"/>
-                <path d="M135 55 Q142 70 138 90" fill="${W}" stroke="${S}" stroke-width="2" data-region="hair-long-r"/>
-                <circle cx="100" cy="65" r="28" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="face"/>
-                <circle cx="90" cy="60" r="5" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-l"/>
-                <circle cx="110" cy="60" r="5" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-r"/>
-                <circle cx="90" cy="60" r="2" fill="${S}"/>
-                <circle cx="110" cy="60" r="2" fill="${S}"/>
-                <path d="M96 72 Q100 76 104 72" fill="none" stroke="${S}" stroke-width="1.5"/>
-                <circle cx="80" cy="68" r="4" fill="${W}" stroke="${S}" stroke-width="0.5" data-region="blush-l"/>
-                <circle cx="120" cy="68" r="4" fill="${W}" stroke="${S}" stroke-width="0.5" data-region="blush-r"/>
-                <path d="M78 92 Q72 100 60 120 L55 190 Q100 200 145 190 L140 120 Q128 100 122 92Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="dress"/>
-                <path d="M78 92 Q65 100 55 115" fill="none" stroke="${S}" stroke-width="2" data-region="sleeve-l"/>
-                <path d="M122 92 Q135 100 145 115" fill="none" stroke="${S}" stroke-width="2" data-region="sleeve-r"/>
-                <path d="M55 190 L145 190" fill="none" stroke="${S}" stroke-width="2"/>
-                <circle cx="100" cy="105" r="4" fill="${W}" stroke="${S}" stroke-width="1" data-region="bow-center"/>
-                <path d="M92 105 Q85 98 90 92 Q95 98 92 105Z" fill="${W}" stroke="${S}" stroke-width="1" data-region="bow-l"/>
-                <path d="M108 105 Q115 98 110 92 Q105 98 108 105Z" fill="${W}" stroke="${S}" stroke-width="1" data-region="bow-r"/>
-                <circle cx="90" cy="140" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="star1"/>
-                <circle cx="110" cy="155" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="star2"/>
-                <circle cx="95" cy="170" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="star3"/>
-            `)
-            },
-            {
-                id: 'unicorn', name: 'Kỳ lân đáng yêu', svg: svgWrap(`
-                <path d="M100 5 L95 35 L105 35Z" fill="${W}" stroke="${S}" stroke-width="2" data-region="horn"/>
-                <ellipse cx="70" cy="45" rx="14" ry="20" fill="${W}" stroke="${S}" stroke-width="2" data-region="ear-l" transform="rotate(-15 70 45)"/>
-                <ellipse cx="130" cy="45" rx="14" ry="20" fill="${W}" stroke="${S}" stroke-width="2" data-region="ear-r" transform="rotate(15 130 45)"/>
-                <circle cx="100" cy="72" r="35" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="head"/>
-                <path d="M68 55 Q55 60 50 72 Q48 80 55 82 Q62 78 68 72" fill="${W}" stroke="${S}" stroke-width="2" data-region="mane1"/>
-                <path d="M132 55 Q145 60 150 72 Q152 80 145 82 Q138 78 132 72" fill="${W}" stroke="${S}" stroke-width="2" data-region="mane2"/>
-                <circle cx="86" cy="66" r="6" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-l"/>
-                <circle cx="114" cy="66" r="6" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-r"/>
-                <circle cx="86" cy="66" r="2.5" fill="${S}"/>
-                <circle cx="114" cy="66" r="2.5" fill="${S}"/>
-                <ellipse cx="100" cy="82" rx="4" ry="3" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="nose"/>
-                <path d="M94 88 Q100 94 106 88" fill="none" stroke="${S}" stroke-width="1.5"/>
-                <circle cx="78" cy="78" r="4" fill="${W}" stroke="${S}" stroke-width="0.5" data-region="blush-l"/>
-                <circle cx="122" cy="78" r="4" fill="${W}" stroke="${S}" stroke-width="0.5" data-region="blush-r"/>
-                <ellipse cx="100" cy="140" rx="42" ry="32" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="body"/>
-                <rect x="72" y="162" width="16" height="25" rx="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="leg-fl"/>
-                <rect x="112" y="162" width="16" height="25" rx="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="leg-fr"/>
-                <path d="M140 135 Q160 120 165 140 Q168 155 160 165 Q152 160 145 148" fill="${W}" stroke="${S}" stroke-width="2" data-region="tail"/>
-                <circle cx="30" cy="40" r="4" fill="${W}" stroke="${S}" stroke-width="1" data-region="star-a"/>
-                <circle cx="170" cy="30" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="star-b"/>
-                <circle cx="25" cy="100" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="star-c"/>
-            `)
-            },
+            { id: 'p1', name: 'Công chúa hoa', svg: sv(p('M80 22L90 5L100 18L110 5L120 22', 'crTop') + r(78, 22, 44, 10, 'crBand', 3) + c(90, 27, 3, 'gem1') + c(100, 27, 3, 'gem2') + c(110, 27, 3, 'gem3') + face(100, 58, 26, 10, 10) + p('M65 40Q55 50 58 70', 'hairL') + p('M135 40Q145 50 142 70', 'hairR') + p('M78 82Q70 95 58 118L55 188Q100 198 145 188L142 118Q130 95 122 82Z', 'dress') + c(100, 98, 4, 'bow') + c(92, 135, 3, 'star1') + c(108, 150, 3, 'star2') + c(95, 168, 3, 'star3')) },
+            { id: 'p2', name: 'Nàng tiên cá', svg: sv(face(100, 55, 25, 10, 10) + p('M65 35Q55 25 60 42', 'hairL') + p('M135 35Q145 25 140 42', 'hairR') + p('M75 78Q70 95 72 125L68 150Q100 165 132 150L128 125Q130 95 125 78Z', 'body') + p('M68 150Q60 170 55 180Q70 185 80 175Q90 185 100 180Q100 185 110 180Q120 185 130 175Q140 185 145 180Q140 170 132 150', 'tail') + c(100, 90, 3, 'necklace') + e(100, 100, 12, 8, 'shell')) },
+            { id: 'p3', name: 'Tiên nữ', svg: sv(face(100, 55, 25, 10, 10) + p('M75 78Q85 90 100 100Q115 90 125 78L130 120Q130 170 120 185L80 185Q70 170 70 120Z', 'dress') + p('M60 55Q40 35 30 50Q25 65 35 70L55 65', 'wingL') + p('M140 55Q160 35 170 50Q175 65 165 70L145 65', 'wingR') + c(100, 95, 3, 'wand') + p('M100 95L100 130', 'wandStick') + c(100, 130, 6, 'wandStar') + stars()) },
+            { id: 'p4', name: 'Hoàng tử', svg: sv(r(82, 10, 36, 12, 'crBand', 3) + p('M82 10L100 0L118 10', 'crTop') + c(100, 16, 3, 'gem') + face(100, 48, 24, 10, 10) + p('M76 70Q68 85 65 130L55 175Q100 185 145 175L135 130Q132 85 124 70Z', 'coat') + r(90, 80, 20, 6, 'belt', 2) + c(100, 83, 3, 'buckle') + r(78, 170, 18, 18, 'bootL', 5) + r(104, 170, 18, 18, 'bootR', 5)) },
+            { id: 'p5', name: 'Nữ hoàng tuyết', svg: sv(p('M75 20L85 0L95 15L100 0L105 15L115 0L125 20', 'iceCrown') + face(100, 52, 26, 10, 10) + p('M70 35Q58 28 55 40', 'hairL') + p('M130 35Q142 28 145 40', 'hairR') + p('M74 76Q62 95 55 125L50 188Q100 198 150 188L145 125Q138 95 126 76Z', 'gown') + c(100, 125, 5, 'snowflake1') + c(85, 150, 4, 'snowflake2') + c(115, 160, 4, 'snowflake3') + c(92, 175, 3, 'snowflake4')) },
+            { id: 'p6', name: 'Kỵ sĩ nhỏ', svg: sv(e(100, 30, 22, 18, 'helmet') + r(88, 35, 24, 10, 'visor', 3) + face(100, 60, 20, 8, 8) + r(80, 78, 40, 50, 'armor', 5) + r(80, 78, 40, 12, 'shoulder', 3) + c(100, 100, 8, 'shield') + r(60, 82, 18, 40, 'armL', 8) + r(122, 82, 18, 40, 'armR', 8) + r(82, 128, 14, 35, 'legL', 6) + r(104, 128, 14, 35, 'legR', 6) + p('M140,90L170,75L170,80L142,95Z', 'sword')) },
+            { id: 'p7', name: 'Bà tiên', svg: sv(p('M80 15Q90 5 100 15Q110 5 120 15L125 30L75 30Z', 'hat') + face(100, 55, 24, 10, 10) + p('M76 30Q65 35 60 50', 'hairL') + p('M124 30Q135 35 140 50', 'hairR') + p('M76 78Q68 95 62 140L58 185Q100 195 142 185L138 140Q132 95 124 78Z', 'robe') + c(90, 130, 3, 'star1') + c(110, 145, 3, 'star2') + c(95, 165, 3, 'star3') + p('M55 78L30 60', 'wandL') + c(30, 60, 5, 'wandStar')) },
+            { id: 'p8', name: 'Công chúa chiến binh', svg: sv(face(100, 50, 24, 10, 10) + p('M65 32Q55 20 60 35', 'hairL') + p('M135 32Q145 20 140 35', 'hairR') + p('M76 72Q68 88 65 130L62 178Q100 188 138 178L135 130Q132 88 124 72Z', 'armorDress') + r(88, 75, 24, 8, 'belt', 3) + c(100, 79, 3, 'gem') + p('M55 85L35 65', 'swordL') + p('M145 85L165 65', 'swordR') + e(80, 172, 10, 6, 'bootL') + e(120, 172, 10, 6, 'bootR')) },
         ]
     },
     food: {
         name: '🍕 Đồ ăn', images: [
-            {
-                id: 'cupcake2', name: 'Cupcake ngọt ngào', svg: svgWrap(`
-                <path d="M55 90 Q35 75 55 58 Q65 42 80 48 Q90 30 105 42 Q120 28 132 45 Q150 38 158 58 Q175 75 155 90Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="cream"/>
-                <circle cx="95" cy="55" r="4" fill="${W}" stroke="${S}" stroke-width="1" data-region="sprinkle1"/>
-                <circle cx="115" cy="50" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="sprinkle2"/>
-                <circle cx="78" cy="62" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="sprinkle3"/>
-                <circle cx="130" cy="65" r="4" fill="${W}" stroke="${S}" stroke-width="1" data-region="sprinkle4"/>
-                <circle cx="105" cy="32" r="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="cherry"/>
-                <line x1="105" y1="25" x2="108" y2="18" stroke="${S}" stroke-width="1.5"/>
-                <path d="M60 90 L50 180 L160 180 L150 90Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="cup"/>
-                <path d="M62 110 L148 110" stroke="${S}" stroke-width="1" stroke-dasharray="4"/>
-                <path d="M65 130 L145 130" stroke="${S}" stroke-width="1" stroke-dasharray="4"/>
-                <path d="M68 150 L142 150" stroke="${S}" stroke-width="1" stroke-dasharray="4"/>
-                <path d="M71 170 L139 170" stroke="${S}" stroke-width="1" stroke-dasharray="4"/>
-                <circle cx="80" cy="82" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="dot1"/>
-                <circle cx="130" cy="78" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="dot2"/>
-            `)
-            },
-            {
-                id: 'donut', name: 'Donut vui vẻ', svg: svgWrap(`
-                <ellipse cx="100" cy="100" rx="55" ry="50" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="base"/>
-                <ellipse cx="100" cy="100" rx="20" ry="18" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="hole"/>
-                <path d="M48 85 Q55 65 75 58 Q90 52 105 55 Q120 52 135 60 Q150 68 155 85 Q148 90 140 88 Q130 82 120 80 Q110 78 100 80 Q90 78 80 82 Q68 88 55 90Z" fill="${W}" stroke="${S}" stroke-width="2" data-region="icing"/>
-                <circle cx="70" cy="75" r="4" fill="${W}" stroke="${S}" stroke-width="1" data-region="sprk1"/>
-                <circle cx="90" cy="68" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="sprk2"/>
-                <circle cx="110" cy="66" r="4" fill="${W}" stroke="${S}" stroke-width="1" data-region="sprk3"/>
-                <circle cx="130" cy="72" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="sprk4"/>
-                <circle cx="80" cy="60" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="sprk5"/>
-                <circle cx="120" cy="62" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="sprk6"/>
-                <circle cx="88" cy="90" r="5" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="eye-l"/>
-                <circle cx="112" cy="90" r="5" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="eye-r"/>
-                <circle cx="88" cy="90" r="2" fill="${S}"/>
-                <circle cx="112" cy="90" r="2" fill="${S}"/>
-                <path d="M94 102 Q100 108 106 102" fill="none" stroke="${S}" stroke-width="1.5"/>
-            `)
-            },
+            { id: 'f1', name: 'Cupcake', svg: sv(p('M55 88Q38 72 55 56Q65 40 80 46Q90 28 105 40Q120 26 132 42Q150 36 158 56Q175 72 155 88Z', 'cream') + c(95, 52, 4, 'spr1') + c(115, 48, 3, 'spr2') + c(78, 60, 3, 'spr3') + c(130, 62, 3, 'spr4') + c(105, 30, 7, 'cherry') + p('M60 88L50 178L160 178L150 88Z', 'cup') + line('M62 108L148 108') + line('M65 128L145 128') + line('M68 148L142 148')) },
+            { id: 'f2', name: 'Donut vui', svg: sv(e(100, 100, 50, 45, 'base') + e(100, 100, 18, 16, 'hole') + p('M52 85Q58 65 78 58Q92 52 105 55Q118 52 132 60Q148 68 152 85Q145 90 138 88Q128 82 118 80Q108 78 100 80Q92 78 82 82Q70 88 58 90Z', 'icing') + c(72, 72, 4, 'sp1') + c(92, 66, 3, 'sp2') + c(112, 64, 3, 'sp3') + c(130, 70, 3, 'sp4') + c(88, 88, 4, 'eyeL') + c(112, 88, 4, 'eyeR') + eyes(88, 88, 112, 88, 2) + smile(100, 100)) },
+            { id: 'f3', name: 'Pizza', svg: sv(p('M100 20L30 170L170 170Z', 'slice') + c(80, 100, 8, 'pep1') + c(120, 110, 7, 'pep2') + c(100, 130, 8, 'pep3') + c(90, 150, 6, 'olive1') + c(115, 148, 7, 'olive2') + e(105, 85, 6, 4, 'mush') + r(28, 165, 144, 10, 'crust', 5)) },
+            { id: 'f4', name: 'Kem ốc quế', svg: sv(c(100, 55, 30, 'scoop1') + c(78, 78, 22, 'scoop2') + c(122, 78, 22, 'scoop3') + p('M68 95L100 188L132 95', 'cone') + line('M75 120L125 120') + line('M80 145L120 145') + c(100, 40, 5, 'cherry') + c(88, 50, 3, 'sp1') + c(112, 50, 3, 'sp2')) },
+            { id: 'f5', name: 'Hamburger', svg: sv(p('M45 75Q45 45 100 45Q155 45 155 75Z', 'bunTop') + r(42, 75, 116, 15, 'lettuce', 3) + r(40, 90, 120, 18, 'patty', 3) + r(42, 108, 116, 12, 'cheese', 3) + r(40, 120, 120, 15, 'bunBot', 5) + c(65, 60, 4, 'seed1') + c(100, 55, 4, 'seed2') + c(135, 60, 4, 'seed3')) },
+            { id: 'f6', name: 'Bánh sinh nhật', svg: sv(r(45, 90, 110, 60, 'layer1', 8) + r(55, 65, 90, 30, 'layer2', 6) + r(65, 45, 70, 25, 'layer3', 5) + r(92, 20, 16, 28, 'candle', 3) + p('M95 15Q100 5 105 15Q100 10 95 15', 'flame') + c(70, 100, 4, 'dec1') + c(100, 100, 4, 'dec2') + c(130, 100, 4, 'dec3') + c(80, 75, 3, 'dec4') + c(120, 75, 3, 'dec5') + r(45, 145, 110, 8, 'plate', 4)) },
+            { id: 'f7', name: 'Trà sữa', svg: sv(p('M65 40L60 165Q60 180 100 180Q140 180 140 165L135 40Z', 'cup') + e(100, 40, 38, 8, 'lid') + r(92, 25, 16, 18, 'straw', 4) + c(80, 100, 8, 'bob1') + c(105, 115, 9, 'bob2') + c(90, 130, 7, 'bob3') + c(115, 138, 8, 'bob4') + c(78, 142, 6, 'bob5') + line('M65 70L135 70')) },
+            { id: 'f8', name: 'Sushi', svg: sv(e(100, 90, 40, 25, 'rice') + r(62, 70, 76, 15, 'nori', 3) + e(100, 75, 25, 12, 'fish') + c(85, 95, 4, 'eyeL') + c(115, 95, 4, 'eyeR') + eyes(85, 95, 115, 95, 2) + smile(100, 105) + e(50, 140, 20, 15, 'nigiri') + e(150, 140, 20, 15, 'maki') + c(150, 140, 8, 'makiroll')) },
+            { id: 'f9', name: 'Kẹo mút', svg: sv(c(100, 65, 40, 'candy') + p('M70 40Q80 30 100 28Q120 30 130 40Q135 55 130 70Q120 85 100 88Q80 85 70 70Z', 'swirl') + c(85, 50, 6, 'dot1') + c(115, 50, 6, 'dot2') + c(100, 72, 6, 'dot3') + r(96, 105, 8, 75, 'stick', 3)) },
+            { id: 'f10', name: 'Bánh mì', svg: sv(e(100, 80, 55, 30, 'bread') + e(100, 72, 45, 20, 'top') + r(60, 75, 80, 6, 'lettuce', 2) + r(58, 80, 84, 5, 'meat', 2) + r(60, 84, 80, 4, 'cheese', 2) + c(75, 68, 3, 'seed1') + c(95, 65, 3, 'seed2') + c(115, 68, 3, 'seed3')) },
         ]
     },
     nature: {
         name: '🌸 Thiên nhiên', images: [
-            {
-                id: 'sunflower', name: 'Hoa hướng dương', svg: svgWrap(`
-                <ellipse cx="100" cy="52" rx="22" ry="12" fill="${W}" stroke="${S}" stroke-width="2" data-region="p1" transform="rotate(0 100 75)"/>
-                <ellipse cx="100" cy="52" rx="22" ry="12" fill="${W}" stroke="${S}" stroke-width="2" data-region="p2" transform="rotate(30 100 75)"/>
-                <ellipse cx="100" cy="52" rx="22" ry="12" fill="${W}" stroke="${S}" stroke-width="2" data-region="p3" transform="rotate(60 100 75)"/>
-                <ellipse cx="100" cy="52" rx="22" ry="12" fill="${W}" stroke="${S}" stroke-width="2" data-region="p4" transform="rotate(90 100 75)"/>
-                <ellipse cx="100" cy="52" rx="22" ry="12" fill="${W}" stroke="${S}" stroke-width="2" data-region="p5" transform="rotate(120 100 75)"/>
-                <ellipse cx="100" cy="52" rx="22" ry="12" fill="${W}" stroke="${S}" stroke-width="2" data-region="p6" transform="rotate(150 100 75)"/>
-                <circle cx="100" cy="75" r="16" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="center"/>
-                <circle cx="94" cy="72" r="3" fill="${S}"/>
-                <circle cx="106" cy="72" r="3" fill="${S}"/>
-                <path d="M96 80 Q100 84 104 80" fill="none" stroke="${S}" stroke-width="1.5"/>
-                <rect x="96" y="92" width="8" height="65" fill="${W}" stroke="${S}" stroke-width="2" data-region="stem"/>
-                <ellipse cx="78" cy="125" rx="20" ry="10" fill="${W}" stroke="${S}" stroke-width="2" data-region="leaf-l" transform="rotate(-30 78 125)"/>
-                <ellipse cx="122" cy="140" rx="20" ry="10" fill="${W}" stroke="${S}" stroke-width="2" data-region="leaf-r" transform="rotate(30 122 140)"/>
-                <path d="M20 190 L180 190" stroke="#8B8" stroke-width="2"/>
-                <path d="M10 190 Q18 178 26 190 Q34 178 42 190" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="grass-l"/>
-                <path d="M150 190 Q158 178 166 190 Q174 178 182 190" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="grass-r"/>
-                <circle cx="40" cy="25" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="bug"/>
-                <path d="M160 15 L165 18 M165 15 L160 18" stroke="${S}" stroke-width="1"/>
-            `)
-            },
-            {
-                id: 'butterfly', name: 'Bướm xinh', svg: svgWrap(`
-                <path d="M100 55 Q65 15 30 45 Q15 65 40 85 Q60 95 85 80 Q95 72 100 65Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="wing-tl"/>
-                <path d="M100 55 Q135 15 170 45 Q185 65 160 85 Q140 95 115 80 Q105 72 100 65Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="wing-tr"/>
-                <path d="M100 85 Q70 80 45 100 Q30 120 50 130 Q70 135 90 115 Q97 100 100 90Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="wing-bl"/>
-                <path d="M100 85 Q130 80 155 100 Q170 120 150 130 Q130 135 110 115 Q103 100 100 90Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="wing-br"/>
-                <circle cx="55" cy="50" r="8" fill="${W}" stroke="${S}" stroke-width="1" data-region="spot1"/>
-                <circle cx="145" cy="50" r="8" fill="${W}" stroke="${S}" stroke-width="1" data-region="spot2"/>
-                <circle cx="60" cy="108" r="6" fill="${W}" stroke="${S}" stroke-width="1" data-region="spot3"/>
-                <circle cx="140" cy="108" r="6" fill="${W}" stroke="${S}" stroke-width="1" data-region="spot4"/>
-                <ellipse cx="100" cy="90" rx="6" ry="22" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="body"/>
-                <circle cx="100" cy="62" r="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="head"/>
-                <circle cx="96" cy="60" r="2" fill="${S}"/>
-                <circle cx="104" cy="60" r="2" fill="${S}"/>
-                <path d="M96 50 Q85 30 80 25" stroke="${S}" stroke-width="1.5" fill="none"/>
-                <path d="M104 50 Q115 30 120 25" stroke="${S}" stroke-width="1.5" fill="none"/>
-                <circle cx="80" cy="25" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="antenna-l"/>
-                <circle cx="120" cy="25" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="antenna-r"/>
-                <path d="M30 160 Q50 150 55 165 Q60 155 80 158" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="flower-bg1"/>
-                <path d="M130 165 Q145 155 155 168 Q162 158 175 162" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="flower-bg2"/>
-            `)
-            },
+            { id: 'n1', name: 'Hoa hướng dương', svg: sv(e(100, 50, 20, 10, 'p1') + e(100, 50, 20, 10, 'p2', 'rotate(30 100 72)') + e(100, 50, 20, 10, 'p3', 'rotate(60 100 72)') + e(100, 50, 20, 10, 'p4', 'rotate(90 100 72)') + e(100, 50, 20, 10, 'p5', 'rotate(120 100 72)') + e(100, 50, 20, 10, 'p6', 'rotate(150 100 72)') + c(100, 72, 14, 'center') + eyes(95, 70, 105, 70, 2) + smile(100, 78) + r(96, 88, 8, 65, 'stem') + e(78, 122, 18, 9, 'leafL', '-30') + e(122, 135, 18, 9, 'leafR', '30') + grass()) },
+            { id: 'n2', name: 'Bướm xinh', svg: sv(p('M100 55Q65 15 30 45Q15 65 40 85Q60 95 85 80L100 65Z', 'wtl') + p('M100 55Q135 15 170 45Q185 65 160 85Q140 95 115 80L100 65Z', 'wtr') + p('M100 85Q70 80 45 100Q30 120 50 130Q70 135 90 115L100 90Z', 'wbl') + p('M100 85Q130 80 155 100Q170 120 150 130Q130 135 110 115L100 90Z', 'wbr') + c(55, 50, 7, 'sp1') + c(145, 50, 7, 'sp2') + c(60, 108, 5, 'sp3') + c(140, 108, 5, 'sp4') + e(100, 88, 5, 20, 'bdy') + c(100, 62, 7, 'hd') + eyes(96, 60, 104, 60, 1.5)) },
+            { id: 'n3', name: 'Cầu vồng', svg: sv(p('M20 130Q20 40 100 40Q180 40 180 130', 'arc1') + p('M35 130Q35 55 100 55Q165 55 165 130', 'arc2') + p('M50 130Q50 70 100 70Q150 70 150 130', 'arc3') + p('M65 130Q65 85 100 85Q135 85 135 130', 'arc4') + c(30, 145, 18, 'cldL') + c(50, 140, 14, 'cldL2') + c(160, 140, 14, 'cldR') + c(175, 145, 18, 'cldR2') + c(100, 20, 4, 'star')) },
+            { id: 'n4', name: 'Cây nấm', svg: sv(p('M40 95Q40 50 100 40Q160 50 160 95Z', 'cap') + c(70, 65, 6, 'dot1') + c(100, 55, 7, 'dot2') + c(130, 65, 6, 'dot3') + c(85, 80, 5, 'dot4') + c(115, 80, 5, 'dot5') + r(85, 95, 30, 60, 'stem', 8) + c(92, 110, 4, 'eyeL') + c(108, 110, 4, 'eyeR') + eyes(92, 110, 108, 110, 2) + smile(100, 122) + grass()) },
+            { id: 'n5', name: 'Hoa tulip', svg: sv(p('M85 55Q80 30 100 20Q120 30 115 55', 'petal1') + p('M80 60Q60 40 70 25Q78 35 85 50', 'petal2') + p('M120 60Q140 40 130 25Q122 35 115 50', 'petal3') + r(96, 58, 8, 80, 'stem') + e(75, 105, 18, 8, 'leafL', '-25') + e(125, 115, 18, 8, 'leafR', '25') + grass()) },
+            { id: 'n6', name: 'Mặt trời', svg: sv(c(100, 100, 35, 'sun') + c(90, 92, 5, 'eyeL') + c(110, 92, 5, 'eyeR') + eyes(90, 92, 110, 92, 2) + smile(100, 108) + p('M100 58L95 40L105 40Z', 'ray1') + p('M100 142L95 160L105 160Z', 'ray2') + p('M58 100L40 95L40 105Z', 'ray3') + p('M142 100L160 95L160 105Z', 'ray4') + p('M70 70L55 55L62 52Z', 'ray5') + p('M130 70L145 55L138 52Z', 'ray6') + p('M70 130L55 145L62 148Z', 'ray7') + p('M130 130L145 145L138 148Z', 'ray8')) },
+            { id: 'n7', name: 'Ốc sên', svg: sv(c(115, 80, 35, 'shell') + p('M115 55Q125 50 130 60Q135 70 125 78Q118 82 112 78Q108 72 112 65Q116 60 118 65', 'spiral') + e(80, 115, 35, 18, 'body') + c(70, 108, 4, 'eyeL') + c(90, 108, 4, 'eyeR') + eyes(70, 108, 90, 108, 2) + smile(80, 120) + p('M65 95Q55 75 50 70', 'antL') + p('M75 95Q72 78 68 72', 'antR') + c(50, 70, 4, 'antTL') + c(68, 72, 4, 'antTR') + grass()) },
+            { id: 'n8', name: 'Cây xương rồng', svg: sv(r(85, 60, 30, 100, 'body', 12) + r(55, 80, 32, 18, 'armL', 8) + r(48, 65, 18, 20, 'armLup', 8) + r(113, 90, 32, 18, 'armR', 8) + r(138, 72, 18, 22, 'armRup', 8) + c(93, 85, 3, 'eyeL') + c(107, 85, 3, 'eyeR') + eyes(93, 85, 107, 85, 1.5) + smile(100, 95) + r(70, 160, 60, 10, 'pot', 3) + p('M65 160L65 185L135 185L135 160', 'potBody')) },
         ]
     },
     vehicle: {
-        name: '🚗 Xe cộ', images: [
-            {
-                id: 'car2', name: 'Xe đua', svg: svgWrap(`
-                <path d="M30 85 L55 50 L145 50 L170 85Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="roof"/>
-                <rect x="20" y="85" width="160" height="38" rx="8" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="body"/>
-                <rect x="62" y="55" width="32" height="28" rx="4" fill="${W}" stroke="${S}" stroke-width="2" data-region="window-l"/>
-                <rect x="100" y="55" width="38" height="28" rx="4" fill="${W}" stroke="${S}" stroke-width="2" data-region="window-r"/>
-                <circle cx="60" cy="126" r="18" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="wheel-l"/>
-                <circle cx="140" cy="126" r="18" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="wheel-r"/>
-                <circle cx="60" cy="126" r="7" fill="${W}" stroke="${S}" stroke-width="2" data-region="hub-l"/>
-                <circle cx="140" cy="126" r="7" fill="${W}" stroke="${S}" stroke-width="2" data-region="hub-r"/>
-                <rect x="12" y="92" width="18" height="10" rx="4" fill="${W}" stroke="${S}" stroke-width="2" data-region="light-l"/>
-                <rect x="170" y="92" width="18" height="10" rx="4" fill="${W}" stroke="${S}" stroke-width="2" data-region="light-r"/>
-                <rect x="85" y="95" width="30" height="4" rx="2" fill="${W}" stroke="${S}" stroke-width="1" data-region="stripe"/>
-                <line x1="5" y1="148" x2="195" y2="148" stroke="${S}" stroke-width="2"/>
-            `, '0 0 200 155')
-            },
+        name: '🚗 Phương tiện', images: [
+            { id: 'v1', name: 'Xe đua', svg: sv(p('M30 80L55 48L145 48L170 80Z', 'roof') + r(20, 80, 160, 35, 'body', 8) + r(62, 52, 30, 26, 'winL', 4) + r(100, 52, 36, 26, 'winR', 4) + c(60, 118, 16, 'whlL') + c(140, 118, 16, 'whlR') + c(60, 118, 6, 'hubL') + c(140, 118, 6, 'hubR') + r(12, 88, 16, 8, 'ltL', 4) + r(172, 88, 16, 8, 'ltR', 4), '0 0 200 140') },
+            { id: 'v2', name: 'Xe buýt', svg: sv(r(20, 45, 160, 70, 'body', 8) + r(30, 52, 35, 28, 'win1', 3) + r(72, 52, 35, 28, 'win2', 3) + r(114, 52, 35, 28, 'win3', 3) + c(50, 120, 14, 'whl1') + c(150, 120, 14, 'whl2') + c(50, 120, 5, 'hub1') + c(150, 120, 5, 'hub2') + r(155, 55, 18, 25, 'door', 3), '0 0 200 140') },
+            { id: 'v3', name: 'Máy bay', svg: sv(e(100, 80, 60, 18, 'body') + p('M80 65L65 30L115 65Z', 'tail') + p('M60 80L25 95L60 95', 'wingL') + p('M140 80L175 95L140 95', 'wingR') + c(120, 75, 5, 'win1') + c(135, 75, 4, 'win2') + r(148, 78, 12, 5, 'nose', 2), '0 0 200 130') },
+            { id: 'v4', name: 'Thuyền buồm', svg: sv(p('M30 120L50 90L170 90L190 120Z', 'hull') + r(95, 30, 10, 65, 'mast') + p('M105 35L160 85L105 85Z', 'sail1') + p('M95 40L50 85L95 85Z', 'sail2') + p('M10 125L190 125', 'water') + p('M10 130Q30 125 50 130Q70 125 90 130Q110 125 130 130Q150 125 170 130Q190 125 195 130', 'wave'), '0 0 200 140') },
+            { id: 'v5', name: 'Tàu hỏa', svg: sv(r(10, 55, 80, 50, 'cabin', 5) + r(95, 70, 55, 35, 'cargo1', 3) + r(155, 70, 40, 35, 'cargo2', 3) + c(30, 110, 12, 'whl1') + c(70, 110, 12, 'whl2') + c(120, 110, 10, 'whl3') + c(175, 110, 10, 'whl4') + r(20, 35, 20, 22, 'chimney', 3) + p('M25 35Q35 20 45 35', 'smoke'), '0 0 200 125') },
+            { id: 'v6', name: 'Xe cứu hỏa', svg: sv(r(15, 50, 110, 55, 'body', 5) + r(130, 60, 55, 45, 'cabin', 5) + c(50, 110, 14, 'whl1') + c(155, 110, 14, 'whl2') + c(50, 110, 5, 'hub1') + c(155, 110, 5, 'hub2') + r(140, 68, 30, 22, 'win', 3) + r(20, 42, 40, 12, 'ladder', 2) + c(80, 72, 8, 'light'), '0 0 200 130') },
         ]
     },
     space: {
         name: '🚀 Vũ trụ', images: [
-            {
-                id: 'rocket2', name: 'Tên lửa bay', svg: svgWrap(`
-                <path d="M100 8 Q118 35 120 75 L80 75 Q82 35 100 8Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="nose"/>
-                <rect x="80" y="75" width="40" height="65" rx="4" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="body"/>
-                <circle cx="100" cy="98" r="14" fill="${W}" stroke="${S}" stroke-width="2" data-region="window"/>
-                <circle cx="100" cy="98" r="6" fill="${W}" stroke="${S}" stroke-width="1" data-region="window-inner"/>
-                <rect x="85" y="118" width="30" height="8" rx="3" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="band"/>
-                <path d="M80 110 L52 148 L80 140Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="fin-l"/>
-                <path d="M120 110 L148 148 L120 140Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="fin-r"/>
-                <path d="M85 140 Q90 168 100 180 Q110 168 115 140Z" fill="${W}" stroke="${S}" stroke-width="2" data-region="flame1"/>
-                <path d="M90 142 Q95 172 100 188 Q105 172 110 142Z" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="flame2"/>
-                <circle cx="35" cy="30" r="5" fill="${W}" stroke="${S}" stroke-width="1" data-region="star1"/>
-                <circle cx="165" cy="45" r="4" fill="${W}" stroke="${S}" stroke-width="1" data-region="star2"/>
-                <circle cx="30" cy="120" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="star3"/>
-                <circle cx="170" cy="100" r="4" fill="${W}" stroke="${S}" stroke-width="1" data-region="star4"/>
-                <circle cx="160" cy="160" r="5" fill="${W}" stroke="${S}" stroke-width="1" data-region="star5"/>
-                <circle cx="45" cy="170" r="3" fill="${W}" stroke="${S}" stroke-width="1" data-region="star6"/>
-            `)
-            },
+            { id: 'sp1', name: 'Tên lửa', svg: sv(p('M100 8Q116 32 118 70L82 70Q84 32 100 8Z', 'nose') + r(82, 70, 36, 60, 'body', 4) + c(100, 95, 12, 'win') + c(100, 95, 5, 'winIn') + p('M82 105L55 140L82 132Z', 'finL') + p('M118 105L145 140L118 132Z', 'finR') + p('M88 132Q94 158 100 170Q106 158 112 132Z', 'flame1') + p('M92 134Q96 165 100 180Q104 165 108 134Z', 'flame2') + stars()) },
+            { id: 'sp2', name: 'Hành tinh', svg: sv(c(100, 90, 40, 'planet') + e(100, 90, 60, 10, 'ring', '-20') + c(45, 40, 5, 'star1') + c(160, 35, 4, 'star2') + c(35, 140, 3, 'star3') + c(170, 130, 4, 'star4') + c(80, 80, 6, 'crater1') + c(110, 100, 5, 'crater2') + c(95, 108, 4, 'crater3')) },
+            { id: 'sp3', name: 'UFO', svg: sv(p('M80 60Q80 35 100 30Q120 35 120 60Z', 'dome') + e(100, 65, 48, 12, 'disc') + c(70, 65, 4, 'lt1') + c(90, 68, 4, 'lt2') + c(110, 68, 4, 'lt3') + c(130, 65, 4, 'lt4') + c(92, 48, 4, 'eyeL') + c(108, 48, 4, 'eyeR') + eyes(92, 48, 108, 48, 2) + p('M80 80L70 100M100 78L100 100M120 80L130 100', 'beam') + stars()) },
+            { id: 'sp4', name: 'Phi hành gia', svg: sv(c(100, 55, 28, 'helmet') + c(100, 55, 20, 'visor') + c(93, 52, 4, 'eyeL') + c(107, 52, 4, 'eyeR') + eyes(93, 52, 107, 52, 2) + smile(100, 62) + r(80, 80, 40, 50, 'suit', 8) + c(100, 100, 6, 'pack') + r(60, 85, 18, 35, 'armL', 8) + r(122, 85, 18, 35, 'armR', 8) + r(82, 130, 14, 30, 'legL', 6) + r(104, 130, 14, 30, 'legR', 6) + stars()) },
+            { id: 'sp5', name: 'Ngôi sao', svg: sv(p('M100 15L115 65L170 65L125 98L140 150L100 120L60 150L75 98L30 65L85 65Z', 'star') + c(92, 78, 4, 'eyeL') + c(108, 78, 4, 'eyeR') + eyes(92, 78, 108, 78, 2) + smile(100, 90) + c(40, 30, 4, 's1') + c(165, 25, 3, 's2') + c(30, 140, 3, 's3') + c(172, 145, 4, 's4')) },
         ]
     },
     house: {
         name: '🏠 Phong cảnh', images: [
-            {
-                id: 'house2', name: 'Ngôi nhà dễ thương', svg: svgWrap(`
-                <circle cx="155" cy="28" r="18" fill="${W}" stroke="${S}" stroke-width="2" data-region="sun"/>
-                <path d="M15 100 L100 35 L185 100Z" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="roof"/>
-                <rect x="35" y="100" width="130" height="75" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="wall"/>
-                <rect x="80" y="135" width="30" height="40" rx="3" fill="${W}" stroke="${S}" stroke-width="2" data-region="door"/>
-                <circle cx="104" cy="158" r="3" fill="${S}"/>
-                <rect x="48" y="110" width="24" height="22" rx="2" fill="${W}" stroke="${S}" stroke-width="2" data-region="window-l"/>
-                <rect x="128" y="110" width="24" height="22" rx="2" fill="${W}" stroke="${S}" stroke-width="2" data-region="window-r"/>
-                <line x1="60" y1="110" x2="60" y2="132" stroke="${S}" stroke-width="1"/>
-                <line x1="48" y1="121" x2="72" y2="121" stroke="${S}" stroke-width="1"/>
-                <line x1="140" y1="110" x2="140" y2="132" stroke="${S}" stroke-width="1"/>
-                <line x1="128" y1="121" x2="152" y2="121" stroke="${S}" stroke-width="1"/>
-                <rect x="85" y="55" width="14" height="30" fill="${W}" stroke="${S}" stroke-width="2" data-region="chimney"/>
-                <path d="M82 55 Q92 42 102 55" fill="${W}" stroke="${S}" stroke-width="1" data-region="smoke"/>
-                <line x1="10" y1="175" x2="190" y2="175" stroke="${S}" stroke-width="2"/>
-                <path d="M15 100 Q22 90 28 100" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="bush-l"/>
-                <path d="M25 100 Q32 88 38 100" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="bush-l2"/>
-                <path d="M158 100 Q165 88 172 100" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="bush-r"/>
-                <path d="M168 100 Q175 90 182 100" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="bush-r2"/>
-                <path d="M20 175 Q25 162 30 175 Q35 166 42 175" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="grass1"/>
-                <path d="M150 175 Q155 164 160 175 Q166 164 172 175" fill="${W}" stroke="#8B8" stroke-width="1.5" data-region="grass2"/>
-            `)
-            },
+            { id: 'h1', name: 'Ngôi nhà', svg: sv(c(155, 28, 16, 'sun') + p('M18 98L100 35L182 98Z', 'roof') + r(38, 98, 124, 72, 'wall') + r(82, 130, 28, 40, 'door', 3) + dot(104, 153, 3) + r(50, 108, 22, 20, 'winL', 2) + r(128, 108, 22, 20, 'winR', 2) + line('M61 108L61 128') + line('M50 118L72 118') + line('M139 108L139 128') + line('M128 118L150 118') + r(87, 52, 12, 28, 'chimney') + grass()) },
+            { id: 'h2', name: 'Lâu đài', svg: sv(r(30, 80, 140, 100, 'wall') + r(30, 70, 25, 15, 'tower1', 3) + r(75, 55, 50, 30, 'tower2', 3) + r(145, 70, 25, 15, 'tower3', 3) + p('M30 70L42 55L55 70', 'towerTop1') + p('M75 55L100 35L125 55', 'towerTop2') + p('M145 70L157 55L170 70', 'towerTop3') + r(85, 130, 30, 50, 'gate', 3) + p('M85 130Q100 115 115 130', 'gateArch') + r(42, 95, 18, 15, 'win1', 2) + r(140, 95, 18, 15, 'win2', 2)) },
+            { id: 'h3', name: 'Cối xay gió', svg: sv(r(75, 80, 50, 100, 'tower', 5) + c(100, 80, 8, 'hub') + p('M100 72L95 20L105 20Z', 'bl1') + p('M108 80L160 75L160 85Z', 'bl2') + p('M100 88L105 140L95 140Z', 'bl3') + p('M92 80L40 75L40 85Z', 'bl4') + r(88, 130, 24, 20, 'door', 3) + grass()) },
+            { id: 'h4', name: 'Ngọn hải đăng', svg: sv(p('M80 60L85 170L115 170L120 60Z', 'tower') + p('M72 55L128 55L120 60L80 60Z', 'top') + r(82, 30, 36, 28, 'light', 5) + c(100, 44, 10, 'lens') + p('M72 55L60 50L65 58', 'rayL') + p('M128 55L140 50L135 58', 'rayR') + p('M30 170Q60 165 100 170Q140 165 170 170Q150 180 100 180Q50 180 30 170', 'water')) },
         ]
     },
     hero: {
         name: '🦸 Nhân vật', images: [
-            {
-                id: 'robot2', name: 'Robot đáng yêu', svg: svgWrap(`
-                <line x1="100" y1="8" x2="100" y2="25" stroke="${S}" stroke-width="3"/>
-                <circle cx="100" cy="8" r="5" fill="${W}" stroke="${S}" stroke-width="2" data-region="antenna"/>
-                <rect x="68" y="25" width="64" height="48" rx="10" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="head"/>
-                <rect x="78" y="38" width="15" height="12" rx="4" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-l"/>
-                <rect x="107" y="38" width="15" height="12" rx="4" fill="${W}" stroke="${S}" stroke-width="2" data-region="eye-r"/>
-                <circle cx="85" cy="44" r="3" fill="${S}"/>
-                <circle cx="115" cy="44" r="3" fill="${S}"/>
-                <rect x="88" y="58" width="24" height="6" rx="3" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="mouth"/>
-                <rect x="72" y="78" width="56" height="62" rx="8" fill="${W}" stroke="${S}" stroke-width="2.5" data-region="body"/>
-                <circle cx="100" cy="100" r="12" fill="${W}" stroke="${S}" stroke-width="2" data-region="chest-light"/>
-                <circle cx="100" cy="100" r="5" fill="${W}" stroke="${S}" stroke-width="1" data-region="chest-inner"/>
-                <rect x="85" y="120" width="30" height="8" rx="3" fill="${W}" stroke="${S}" stroke-width="1.5" data-region="belt"/>
-                <rect x="50" y="82" width="18" height="42" rx="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="arm-l"/>
-                <rect x="132" y="82" width="18" height="42" rx="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="arm-r"/>
-                <circle cx="59" cy="128" r="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="hand-l"/>
-                <circle cx="141" cy="128" r="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="hand-r"/>
-                <rect x="78" y="140" width="18" height="38" rx="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="leg-l"/>
-                <rect x="104" y="140" width="18" height="38" rx="8" fill="${W}" stroke="${S}" stroke-width="2" data-region="leg-r"/>
-                <rect x="72" y="176" width="26" height="10" rx="4" fill="${W}" stroke="${S}" stroke-width="2" data-region="foot-l"/>
-                <rect x="102" y="176" width="26" height="10" rx="4" fill="${W}" stroke="${S}" stroke-width="2" data-region="foot-r"/>
-                <circle cx="88" cy="92" r="2" fill="${W}" stroke="${S}" stroke-width="1" data-region="button1"/>
-                <circle cx="112" cy="92" r="2" fill="${W}" stroke="${S}" stroke-width="1" data-region="button2"/>
-            `)
-            },
+            { id: 'hr1', name: 'Robot', svg: sv(line('M100 8L100 22') + c(100, 8, 5, 'ant') + r(70, 22, 60, 45, 'head', 8) + r(80, 35, 13, 10, 'eyeL', 4) + r(107, 35, 13, 10, 'eyeR', 4) + eyes(86, 40, 114, 40, 3) + r(88, 55, 24, 5, 'mouth', 2) + r(74, 72, 52, 58, 'body', 6) + c(100, 96, 10, 'chest') + c(100, 96, 4, 'chestIn') + r(52, 78, 18, 38, 'armL', 8) + r(130, 78, 18, 38, 'armR', 8) + c(61, 120, 7, 'handL') + c(139, 120, 7, 'handR') + r(80, 130, 16, 35, 'legL', 7) + r(104, 130, 16, 35, 'legR', 7) + r(74, 163, 24, 8, 'ftL', 4) + r(102, 163, 24, 8, 'ftR', 4)) },
+            { id: 'hr2', name: 'Siêu nhân', svg: sv(face(100, 45, 22, 9, 9) + p('M78 65Q68 80 62 120L58 175Q100 185 142 175L138 120Q132 80 122 65Z', 'suit') + p('M60 72L40 55', 'capeL') + p('M140 72L160 55', 'capeR') + p('M40 55Q30 80 35 120Q40 140 50 160L58 160', 'capeBL') + p('M160 55Q170 80 165 120Q160 140 150 160L142 160', 'capeBR') + r(90, 82, 20, 15, 'logo', 3) + e(80, 172, 10, 6, 'bootL') + e(120, 172, 10, 6, 'bootR')) },
+            { id: 'hr3', name: 'Ninja', svg: sv(c(100, 50, 24, 'head') + r(78, 42, 44, 10, 'mask', 3) + c(90, 45, 5, 'eyeL') + c(110, 45, 5, 'eyeR') + eyes(90, 45, 110, 45, 2) + p('M78 68Q70 82 65 125L60 178Q100 188 140 178L135 125Q130 82 122 68Z', 'suit') + r(88, 78, 24, 6, 'belt', 2) + p('M55 82L35 68L38 78L55 90', 'swordL') + e(80, 172, 10, 6, 'shoeL') + e(120, 172, 10, 6, 'shoeR')) },
+            { id: 'hr4', name: 'Phù thủy', svg: sv(p('M72 42L100 0L128 42Z', 'hat') + r(65, 42, 70, 8, 'hatBrim', 3) + face(100, 68, 24, 10, 10) + p('M76 90Q68 105 62 145L58 185Q100 195 142 185L138 145Q132 105 124 90Z', 'robe') + c(90, 130, 3, 'star1') + c(110, 150, 3, 'star2') + p('M140 90L170 50', 'wand') + c(170, 50, 6, 'wandOrb') + stars()) },
+            { id: 'hr5', name: 'Hải tặc', svg: sv(r(72, 18, 56, 12, 'hatBrim', 3) + p('M75 18Q80 2 100 0Q120 2 125 18', 'hatTop') + c(100, 9, 4, 'skull') + face(100, 52, 24, 10, 10) + c(90, 47, 5, 'eyeL') + r(105, 42, 12, 10, 'eyePatch', 2) + p('M76 74Q68 90 62 130L58 178Q100 188 142 178L138 130Q132 90 124 74Z', 'coat') + r(88, 80, 24, 6, 'belt', 2) + p('M55 85L35 70', 'hookL')) },
+        ]
+    },
+    cute: {
+        name: '🧸 Ngộ nghĩnh', images: [
+            { id: 'c1', name: 'Gấu bông', svg: sv(c(62, 40, 14, 'earL') + c(138, 40, 14, 'earR') + c(62, 40, 6, 'earIL') + c(138, 40, 6, 'earIR') + face(100, 72, 36, 14, 14) + e(100, 82, 8, 6, 'muz') + e(100, 142, 34, 28, 'body') + e(100, 135, 18, 12, 'belly') + e(68, 142, 10, 15, 'armL') + e(132, 142, 10, 15, 'armR') + e(82, 168, 11, 6, 'ftL') + e(118, 168, 11, 6, 'ftR') + c(100, 130, 4, 'heart')) },
+            { id: 'c2', name: 'Búp bê', svg: sv(c(70, 30, 12, 'hairBow') + face(100, 55, 26, 10, 10) + p('M74 35Q60 40 58 65', 'hairL') + p('M126 35Q140 40 142 65', 'hairR') + p('M74 80Q68 95 62 135L58 178Q100 188 142 178L138 135Q132 95 126 80Z', 'dress') + c(100, 95, 4, 'button1') + c(100, 110, 4, 'button2') + c(100, 125, 4, 'button3') + e(80, 175, 8, 5, 'shoeL') + e(120, 175, 8, 5, 'shoeR')) },
+            { id: 'c3', name: 'Kẹo gấu', svg: sv(c(65, 42, 12, 'earL') + c(135, 42, 12, 'earR') + face(100, 68, 30, 12, 12) + e(100, 130, 28, 28, 'body') + e(72, 125, 8, 12, 'armL') + e(128, 125, 8, 12, 'armR') + e(85, 155, 10, 6, 'ftL') + e(115, 155, 10, 6, 'ftR') + e(100, 125, 12, 10, 'belly')) },
+            { id: 'c4', name: 'Mặt mèo', svg: sv(p('M60 50L72 22L90 50', 'earL') + p('M110 50L128 22L140 50', 'earR') + c(100, 82, 42, 'head') + c(82, 75, 6, 'eyeL') + c(118, 75, 6, 'eyeR') + eyes(82, 75, 118, 75, 3) + dot(82, 73, 1.5) + dot(118, 73, 1.5) + e(100, 92, 5, 3.5, 'nose') + smile(100, 100) + line('M60 85L35 78M60 89L32 89M60 93L35 100') + line('M140 85L165 78M140 89L168 89M140 93L165 100') + '<circle cx="75" cy="98" r="5" fill="' + W + '" stroke="' + S + '" stroke-width="0.5" data-region="blushL"/><circle cx="125" cy="98" r="5" fill="' + W + '" stroke="' + S + '" stroke-width="0.5" data-region="blushR"/>') },
+            { id: 'c5', name: 'Đám mây', svg: sv(c(70, 80, 28, 'cl1') + c(100, 65, 32, 'cl2') + c(135, 78, 25, 'cl3') + c(90, 95, 20, 'cl4') + c(115, 92, 22, 'cl5') + c(88, 78, 4, 'eyeL') + c(108, 78, 4, 'eyeR') + eyes(88, 78, 108, 78, 2) + smile(100, 88) + p('M60 118L65 140', 'drop1') + p('M100 115L102 145', 'drop2') + p('M140 118L138 142', 'drop3') + c(65, 145, 4, 'd1') + c(102, 150, 4, 'd2') + c(138, 147, 4, 'd3')) },
+            { id: 'c6', name: 'Trái tim', svg: sv(p('M100 45Q120 20 145 25Q170 35 165 65Q160 95 100 145Q40 95 35 65Q30 35 55 25Q80 20 100 45Z', 'heart') + c(85, 65, 5, 'eyeL') + c(115, 65, 5, 'eyeR') + eyes(85, 65, 115, 65, 2) + smile(100, 82) + c(75, 55, 3, 'sparkle1') + c(130, 50, 3, 'sparkle2')) },
+            { id: 'c7', name: 'Ngôi sao kawaii', svg: sv(p('M100 15L115 65L170 65L125 98L140 150L100 120L60 150L75 98L30 65L85 65Z', 'star') + c(90, 78, 5, 'eyeL') + c(110, 78, 5, 'eyeR') + eyes(90, 78, 110, 78, 2) + smile(100, 92) + c(50, 30, 3, 'sp1') + c(155, 25, 4, 'sp2')) },
+            { id: 'c8', name: 'Cầu vồng cười', svg: sv(p('M20 130Q20 50 100 50Q180 50 180 130', 'arc1') + p('M35 130Q35 65 100 65Q165 65 165 130', 'arc2') + p('M50 130Q50 78 100 78Q150 78 150 130', 'arc3') + c(85, 95, 5, 'eyeL') + c(115, 95, 5, 'eyeR') + eyes(85, 95, 115, 95, 2) + smile(100, 108) + c(25, 140, 15, 'cldL') + c(175, 140, 15, 'cldR')) },
+        ]
+    },
+    dino: {
+        name: '🦕 Khủng long', images: [
+            { id: 'd1', name: 'T-Rex bé', svg: sv(c(100, 55, 28, 'head') + c(90, 48, 5, 'eyeL') + c(110, 48, 5, 'eyeR') + eyes(90, 48, 110, 48, 2) + p('M85 65Q100 75 115 65', 'mouth') + p('M72 55Q60 40 55 50', 'spike1') + p('M128 55Q140 40 145 50', 'spike2') + e(100, 120, 30, 35, 'body') + r(80, 150, 16, 30, 'legL', 7) + r(104, 150, 16, 30, 'legR', 7) + e(68, 110, 8, 12, 'armL') + e(132, 110, 8, 12, 'armR') + p('M70 125Q50 115 40 125Q38 135 50 132', 'tail')) },
+            { id: 'd2', name: 'Stegosaurus', svg: sv(e(110, 100, 50, 28, 'body') + c(150, 78, 20, 'head') + c(145, 72, 4, 'eye') + dot(145, 72, 2) + p('M155 85Q162 90 158 95', 'mouth') + p('M85 68L90 52L98 68', 'sp1') + p('M95 62L100 45L108 62', 'sp2') + p('M105 60L110 42L118 60', 'sp3') + p('M115 62L120 48L128 65', 'sp4') + r(80, 122, 14, 25, 'legL', 6) + r(105, 122, 14, 25, 'legR', 6) + p('M60 100Q40 95 30 100', 'tail'), '0 0 200 155') },
+            { id: 'd3', name: 'Pterodactyl', svg: sv(c(100, 55, 15, 'head') + c(95, 50, 4, 'eye') + dot(95, 50, 2) + p('M108 55L125 52L108 60', 'beak') + e(100, 85, 12, 15, 'body') + p('M88 75L40 50Q30 60 40 80L88 85', 'wingL') + p('M112 75L160 50Q170 60 160 80L112 85', 'wingR') + p('M95 100L90 120', 'legL') + p('M105 100L110 120', 'legR')) },
+            { id: 'd4', name: 'Triceratops', svg: sv(c(120, 70, 25, 'head') + c(115, 62, 4, 'eye') + dot(115, 62, 2) + p('M140 65L160 55L145 70', 'horn1') + p('M130 55L138 38L135 58', 'horn2') + p('M110 55L105 38L115 58', 'horn3') + p('M95 58Q80 48 95 45Q110 42 120 50', 'frill') + e(85, 105, 35, 25, 'body') + r(65, 125, 14, 25, 'legFL', 6) + r(90, 125, 14, 25, 'legFR', 6) + p('M50 105Q35 100 28 108', 'tail')) },
+        ]
+    },
+    ocean: {
+        name: '🐠 Đại dương', images: [
+            { id: 'o1', name: 'Cá vàng', svg: sv(e(100, 90, 35, 25, 'body') + p('M135 90Q160 70 155 90Q160 110 135 90', 'tail') + c(85, 85, 5, 'eye') + dot(85, 85, 2) + e(100, 95, 6, 3, 'mouth') + p('M105 72L115 60L108 78', 'fin1') + p('M90 108L80 120L95 110', 'fin2') + c(95, 85, 3, 'dot1') + c(108, 88, 3, 'dot2') + c(102, 98, 3, 'dot3')) },
+            { id: 'o2', name: 'Bạch tuộc', svg: sv(c(100, 60, 30, 'head') + c(88, 55, 5, 'eyeL') + c(112, 55, 5, 'eyeR') + eyes(88, 55, 112, 55, 2) + smile(100, 70) + p('M70 85Q55 110 45 135Q42 140 50 138', 't1') + p('M78 88Q68 115 62 140Q60 145 68 142', 't2') + p('M88 90Q82 118 80 145Q78 150 86 148', 't3') + p('M100 92Q100 120 100 148Q100 153 105 150', 't4') + p('M112 90Q118 118 120 145Q122 150 114 148', 't5') + p('M122 88Q132 115 138 140Q140 145 132 142', 't6') + p('M130 85Q145 110 155 135Q158 140 150 138', 't7')) },
+            { id: 'o3', name: 'Cá heo', svg: sv(e(100, 80, 50, 28, 'body') + p('M50 70Q35 50 50 55', 'fin') + p('M150 75Q168 62 155 82', 'tail') + c(70, 75, 5, 'eye') + dot(70, 75, 2) + e(100, 92, 8, 4, 'belly') + smile(85, 85)) },
+            { id: 'o4', name: 'Sao biển', svg: sv(p('M100 25L112 68L158 68L120 95L135 140L100 112L65 140L80 95L42 68L88 68Z', 'star') + c(92, 80, 4, 'eyeL') + c(108, 80, 4, 'eyeR') + eyes(92, 80, 108, 80, 2) + smile(100, 92) + c(85, 60, 3, 'dot1') + c(115, 60, 3, 'dot2') + c(130, 88, 3, 'dot3') + c(70, 88, 3, 'dot4')) },
+            { id: 'o5', name: 'Cá voi', svg: sv(e(100, 85, 55, 35, 'body') + c(72, 78, 5, 'eye') + dot(72, 78, 2) + p('M155 85Q175 70 170 88Q175 105 155 88', 'tail') + p('M100 55L95 35L105 35', 'spout1') + p('M95 35Q100 25 105 35', 'spout2') + e(100, 98, 15, 5, 'belly') + smile(82, 95), '0 0 200 140') },
+            { id: 'o6', name: 'Con cua', svg: sv(e(100, 90, 30, 22, 'body') + c(82, 68, 8, 'eyeStL') + c(118, 68, 8, 'eyeStR') + c(82, 62, 5, 'eyeL') + c(118, 62, 5, 'eyeR') + eyes(82, 62, 118, 62, 2) + smile(100, 98) + p('M70 82L45 65Q35 68 40 78L55 85', 'clawL') + p('M130 82L155 65Q165 68 160 78L145 85', 'clawR') + p('M75 105L60 118', 'legL1') + p('M80 108L68 125', 'legL2') + p('M125 105L140 118', 'legR1') + p('M120 108L132 125', 'legR2')) },
+        ]
+    },
+    festival: {
+        name: '🎪 Lễ hội', images: [
+            { id: 'fe1', name: 'Bóng bay', svg: sv(e(55, 55, 22, 28, 'b1') + e(105, 45, 25, 32, 'b2') + e(155, 60, 20, 25, 'b3') + e(80, 70, 18, 24, 'b4') + e(135, 72, 20, 26, 'b5') + line('M55 83L80 155') + line('M105 77L80 155') + line('M155 85L80 155') + line('M80 94L80 155') + line('M135 98L80 155') + p('M72 155Q80 162 88 155Q80 158 72 155', 'ribbon')) },
+            { id: 'fe2', name: 'Quà tặng', svg: sv(r(35, 75, 130, 80, 'box', 5) + r(35, 62, 130, 18, 'lid', 3) + r(90, 62, 20, 93, 'vRibbon', 2) + r(35, 100, 130, 16, 'hRibbon', 2) + p('M80 62Q70 40 60 45Q50 50 60 58L80 62', 'bowL') + p('M120 62Q130 40 140 45Q150 50 140 58L120 62', 'bowR') + c(100, 50, 5, 'bowCenter')) },
+            { id: 'fe3', name: 'Kẹo bông', svg: sv(c(100, 60, 35, 'cotton') + c(82, 48, 18, 'c1') + c(118, 48, 18, 'c2') + c(85, 72, 15, 'c3') + c(115, 72, 15, 'c4') + r(95, 95, 10, 80, 'stick', 4)) },
+            { id: 'fe4', name: 'Ngôi sao lấp lánh', svg: sv(p('M100 10L118 65L175 65L128 100L145 158L100 125L55 158L72 100L25 65L82 65Z', 'star') + c(90, 78, 5, 'eyeL') + c(110, 78, 5, 'eyeR') + eyes(90, 78, 110, 78, 2.5) + smile(100, 92) + c(68, 48, 3, 'sp1') + c(132, 48, 3, 'sp2') + c(80, 120, 3, 'sp3') + c(120, 120, 3, 'sp4')) },
         ]
     },
 };
-
-function getTotalImages() {
-    return Object.values(IMAGE_LIBRARY).reduce((sum, cat) => sum + cat.images.length, 0);
-}

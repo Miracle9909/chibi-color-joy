@@ -218,6 +218,15 @@ body {
     white-space: nowrap;
 }
 
+.save-btn {
+    background: #D1FAE5 !important;
+    color: #059669;
+}
+
+.save-btn:active {
+    background: #6EE7B7 !important;
+}
+
 /* Canvas */
 .canvas-area {
     display: flex;
