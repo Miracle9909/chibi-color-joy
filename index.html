@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎨 Chibi Color Joy — Tô Màu Cho Bé</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/icon-180.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Chibi Color">
+    <meta name="theme-color" content="#FF6B9D">
+</head>
+
+<body>
+
+    <!-- ===== HOME SCREEN ===== -->
+    <div class="screen active" id="homeScreen">
+        <div class="home-wrap">
+            <div class="home-header">
+                <h1 class="logo">🎨 Chibi Color Joy</h1>
+                <p class="tagline">Chạm là tô — Thấy là mê ✨</p>
+            </div>
+            <div class="cat-section">
+                <h3>📂 Chọn chủ đề</h3>
+                <div class="cat-grid" id="categoryGrid"></div>
+            </div>
+            <div class="safe-bottom"></div>
+        </div>
+    </div>
+
+    <!-- ===== CATEGORY SCREEN ===== -->
+    <div class="screen" id="categoryScreen">
+        <div class="top-nav">
+            <button class="nav-btn" onclick="goHome()">⬅️</button>
+            <h2 id="catTitle" class="nav-title"></h2>
+        </div>
+        <div class="img-grid" id="imageGrid"></div>
+        <div class="safe-bottom"></div>
+    </div>
+
+    <!-- ===== COLORING SCREEN ===== -->
+    <div class="screen" id="colorScreen">
+        <div class="color-topbar">
+            <button class="nav-btn" onclick="goBackToCategory()">⬅️</button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-lbl" id="progressText">0/0</span>
+            <button class="nav-btn" onclick="undoLast()">↩️</button>
+            <button class="nav-btn" onclick="clearCanvas()">🗑️</button>
+        </div>
+
+        <div class="canvas-area">
+            <div class="svg-canvas" id="colorCanvas"></div>
+        </div>
+
+        <!-- Palette Selector -->
+        <div class="palette-bar">
+            <div class="pal-switch" id="paletteSelector"></div>
+            <div class="color-row" id="palette"></div>
+        </div>
+    </div>
+
+    <!-- ===== COMPLETION OVERLAY ===== -->
+    <div class="completion-overlay" id="completionOverlay">
+        <div id="completionFX"></div>
+        <div class="completion-card">
+            <div class="completion-emoji">🎉</div>
+            <h2>Tuyệt vời!</h2>
+            <p>Bé đã tô xong rồi! 🌟</p>
+            <button class="big-btn" onclick="nextImage()">➡️ Hình tiếp theo</button>
+            <button class="big-btn alt" onclick="closeCompletion()">🎨 Tiếp tục tô</button>
+            <button class="big-btn alt2" onclick="goBackToCategory()">📂 Chọn hình khác</button>
+        </div>
+    </div>
+
+    <!-- Hidden YouTube Player -->
+    <div id="yt-player" style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;"></div>
+
+    <!-- Mini Music Player -->
+    <div class="mini-player visible" id="miniPlayer">
+        <div class="mp-track" id="track-title">🎵 Nhấn ▶ để phát nhạc</div>
+        <div class="mp-controls">
+            <button class="mp-btn" onclick="MusicPlayer.prevTrack()">⏮️</button>
+            <button class="mp-btn big" id="musicPlayBtn" onclick="toggleMusic()">▶️</button>
+            <button class="mp-btn" onclick="MusicPlayer.nextTrack()">⏭️</button>
+            <button class="mp-btn" onclick="MusicPlayer.reshufflePlaylist()">🔀</button>
+        </div>
+        <div class="mp-info" id="track-info">0/100</div>
+    </div>
+
+    <script src="music.js"></script>
+    <script src="images.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Init music
+        MusicPlayer.init();
+
+        let musicOn = false;
+        function toggleMusic() {
+            if (!musicOn) { musicOn = true; MusicPlayer.play(); }
+            else { MusicPlayer.toggle(); musicOn = MusicPlayer.isPlaying; }
+            document.getElementById('musicPlayBtn').textContent = MusicPlayer.isPlaying ? '⏸️' : '▶️';
+        }
+
+        // Auto-start on first touch
+        document.addEventListener('click', () => {
+            if (!musicOn) {
+                musicOn = true; MusicPlayer.play();
+                document.getElementById('musicPlayBtn').textContent = '⏸️';
+            }
+        }, { once: true });
+    </script>
+</body>
+
+</html>

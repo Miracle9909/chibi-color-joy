@@ -1,0 +1,277 @@
+/* ============================================ */
+/* 🎨 Chibi Color Joy — Main App Logic           */
+/* Click-to-fill coloring with completion FX     */
+/* ============================================ */
+
+// ===== COLOR PALETTE =====
+const PALETTES = {
+    basic: ['#EF4444', '#F97316', '#EAB308', '#22C55E', '#14B8A6', '#3B82F6', '#6366F1', '#8B5CF6', '#EC4899', '#F43F5E'],
+    pastel: ['#FDA4AF', '#FDBA74', '#FDE047', '#86EFAC', '#67E8F9', '#93C5FD', '#A78BFA', '#F0ABFC', '#FCA5A5', '#FDE68A'],
+    vivid: ['#DC2626', '#EA580C', '#CA8A04', '#16A34A', '#0891B2', '#2563EB', '#7C3AED', '#C026D3', '#BE123C', '#0D9488'],
+    rainbow: ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3', '#FF69B4', '#00CED1', '#FFD700'],
+    earth: ['#92400E', '#78350F', '#365314', '#064E3B', '#1E3A5F', '#4A5568', '#D2691E', '#8B7355', '#556B2F', '#2F4F4F'],
+    skin: ['#FDBCB4', '#F0C8A0', '#D4A574', '#A0785A', '#8B6F4E', '#6B4226', '#FFF0DB', '#FFE4C4', '#CDAA7D', '#8B4513'],
+};
+
+let currentColor = '#EF4444';
+let currentPalette = 'basic';
+let currentCategory = null;
+let currentImage = null;
+let coloredRegions = {};
+let totalRegions = 0;
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+    renderCategoryList();
+    renderPalette('basic');
+    showScreen('homeScreen');
+});
+
+// ===== SCREENS =====
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+}
+
+// ===== CATEGORY LIST =====
+function renderCategoryList() {
+    const grid = document.getElementById('categoryGrid');
+    grid.innerHTML = '';
+    Object.entries(IMAGE_LIBRARY).forEach(([key, cat]) => {
+        const btn = document.createElement('button');
+        btn.className = 'cat-card';
+        btn.innerHTML = `
+            <span class="cat-icon">${cat.name.split(' ')[0]}</span>
+            <span class="cat-label">${cat.name.split(' ').slice(1).join(' ')}</span>
+            <span class="cat-count">${cat.images.length} hình</span>
+        `;
+        btn.onclick = () => openCategory(key);
+        grid.appendChild(btn);
+    });
+}
+
+// ===== CATEGORY VIEW =====
+function openCategory(catKey) {
+    currentCategory = catKey;
+    const cat = IMAGE_LIBRARY[catKey];
+    document.getElementById('catTitle').textContent = cat.name;
+
+    const grid = document.getElementById('imageGrid');
+    grid.innerHTML = '';
+    cat.images.forEach(img => {
+        const card = document.createElement('div');
+        card.className = 'img-card';
+        card.innerHTML = `
+            <div class="img-preview">${img.svg}</div>
+            <span class="img-name">${img.name}</span>
+        `;
+        card.onclick = () => openColoring(img);
+        grid.appendChild(card);
+    });
+
+    showScreen('categoryScreen');
+    playSFX('click');
+}
+
+// ===== COLORING VIEW =====
+function openColoring(img) {
+    currentImage = img;
+    coloredRegions = {};
+    totalRegions = 0;
+
+    const canvas = document.getElementById('colorCanvas');
+    canvas.innerHTML = img.svg;
+
+    // Count and setup clickable regions
+    const regions = canvas.querySelectorAll('[data-region]');
+    totalRegions = regions.length;
+
+    regions.forEach(region => {
+        region.style.cursor = 'pointer';
+        region.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fillRegion(region);
+        });
+        region.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            fillRegion(region);
+        });
+    });
+
+    updateProgress();
+    showScreen('colorScreen');
+    playSFX('click');
+}
+
+function fillRegion(region) {
+    const regionId = region.getAttribute('data-region');
+    region.setAttribute('fill', currentColor);
+    region.style.transition = 'fill 0.2s';
+    coloredRegions[regionId] = currentColor;
+
+    // Ripple effect
+    region.style.filter = 'brightness(1.3)';
+    setTimeout(() => region.style.filter = '', 200);
+
+    playSFX('fill');
+    updateProgress();
+
+    // Check completion
+    if (Object.keys(coloredRegions).length >= totalRegions) {
+        setTimeout(showCompletion, 400);
+    }
+}
+
+function updateProgress() {
+    const filled = Object.keys(coloredRegions).length;
+    const pct = totalRegions > 0 ? Math.round((filled / totalRegions) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = `${filled}/${totalRegions}`;
+}
+
+// ===== PALETTE =====
+function renderPalette(paletteName) {
+    currentPalette = paletteName;
+    const container = document.getElementById('palette');
+    container.innerHTML = '';
+    PALETTES[paletteName].forEach((color, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'color-btn' + (i === 0 ? ' active' : '');
+        btn.style.background = color;
+        btn.onclick = () => selectColor(color, btn);
+        container.appendChild(btn);
+    });
+
+    // Eraser
+    const eraser = document.createElement('button');
+    eraser.className = 'color-btn eraser';
+    eraser.textContent = '🧹';
+    eraser.onclick = () => selectColor('white', eraser);
+    container.appendChild(eraser);
+
+    // Palette selector
+    const selWrap = document.getElementById('paletteSelector');
+    if (selWrap) {
+        selWrap.innerHTML = '';
+        Object.keys(PALETTES).forEach(name => {
+            const pb = document.createElement('button');
+            pb.className = 'pal-btn' + (name === paletteName ? ' active' : '');
+            pb.textContent = name === 'basic' ? '🌈' : name === 'pastel' ? '🍬' : name === 'vivid' ? '🔥' : name === 'rainbow' ? '🌙' : name === 'earth' ? '🌍' : '👤';
+            pb.title = name;
+            pb.onclick = () => renderPalette(name);
+            selWrap.appendChild(pb);
+        });
+    }
+}
+
+function selectColor(color, btn) {
+    currentColor = color;
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    playSFX('click');
+}
+
+// ===== UNDO =====
+function undoLast() {
+    const keys = Object.keys(coloredRegions);
+    if (keys.length === 0) return;
+    const lastKey = keys[keys.length - 1];
+    delete coloredRegions[lastKey];
+    const canvas = document.getElementById('colorCanvas');
+    const region = canvas.querySelector(`[data-region="${lastKey}"]`);
+    if (region) region.setAttribute('fill', 'white');
+    updateProgress();
+    playSFX('click');
+}
+
+// ===== CLEAR ALL =====
+function clearCanvas() {
+    coloredRegions = {};
+    const canvas = document.getElementById('colorCanvas');
+    canvas.querySelectorAll('[data-region]').forEach(r => r.setAttribute('fill', 'white'));
+    updateProgress();
+    playSFX('click');
+}
+
+// ===== COMPLETION =====
+function showCompletion() {
+    playSFX('complete');
+
+    // Fireworks confetti
+    const container = document.getElementById('completionFX');
+    container.innerHTML = '';
+    const colors = ['#FF6B9D', '#6C63FF', '#FFD93D', '#6BCB77', '#00B4D8', '#FF8C42', '#F43F5E', '#8B5CF6'];
+    for (let i = 0; i < 60; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        Object.assign(p.style, {
+            left: Math.random() * 100 + '%',
+            background: colors[Math.floor(Math.random() * colors.length)],
+            animationDelay: Math.random() * 2 + 's',
+            animationDuration: (1.5 + Math.random() * 2) + 's',
+            width: (4 + Math.random() * 8) + 'px',
+            height: (4 + Math.random() * 8) + 'px',
+            borderRadius: Math.random() > 0.5 ? '50%' : '2px'
+        });
+        container.appendChild(p);
+    }
+
+    document.getElementById('completionOverlay').classList.add('show');
+
+    // Vibrate if available
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+}
+
+function closeCompletion() {
+    document.getElementById('completionOverlay').classList.remove('show');
+}
+
+function nextImage() {
+    closeCompletion();
+    const cat = IMAGE_LIBRARY[currentCategory];
+    const idx = cat.images.findIndex(i => i.id === currentImage.id);
+    const next = cat.images[(idx + 1) % cat.images.length];
+    openColoring(next);
+}
+
+// ===== SFX =====
+let sfxCtx = null;
+function playSFX(type) {
+    try {
+        if (!sfxCtx) sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (sfxCtx.state === 'suspended') sfxCtx.resume();
+        const now = sfxCtx.currentTime;
+        const g = sfxCtx.createGain();
+        g.gain.value = 0.25;
+        g.connect(sfxCtx.destination);
+
+        function tone(f, t, d, type = 'sine') {
+            const o = sfxCtx.createOscillator();
+            const ng = sfxCtx.createGain();
+            o.type = type; o.frequency.value = f;
+            ng.gain.setValueAtTime(0, t);
+            ng.gain.linearRampToValueAtTime(0.5, t + 0.02);
+            ng.gain.linearRampToValueAtTime(0, t + d);
+            o.connect(ng); ng.connect(g);
+            o.start(t); o.stop(t + d + 0.01);
+        }
+
+        if (type === 'fill') {
+            tone(600, now, 0.06);
+            tone(900, now + 0.05, 0.06);
+        } else if (type === 'click') {
+            tone(500, now, 0.04);
+        } else if (type === 'complete') {
+            [523, 659, 784, 880, 1047, 1175, 1319, 1568].forEach((f, i) => {
+                tone(f, now + i * 0.1, 0.18);
+                if (i % 2 === 0) tone(f / 2, now + i * 0.1, 0.22, 'triangle');
+            });
+        }
+    } catch (e) { }
+}
+
+// ===== NAV =====
+function goHome() { showScreen('homeScreen'); }
+function goBackToCategory() { showScreen('categoryScreen'); }
