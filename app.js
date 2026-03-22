@@ -160,30 +160,81 @@ function clearCanvas() {
     playSFX('click');
 }
 
-// ===== SAVE TO DEVICE =====
+// ===== SAVE TO DEVICE (iPad-compatible) =====
 function saveImage() {
     const svgEl = document.querySelector('#colorCanvas svg');
     if (!svgEl) return;
-    const svgData = new XMLSerializer().serializeToString(svgEl);
+
+    // Clone and ensure white background
+    const clone = svgEl.cloneNode(true);
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    if (!clone.getAttribute('width')) clone.setAttribute('width', '800');
+    if (!clone.getAttribute('height')) clone.setAttribute('height', '800');
+
+    // Add white background rect
+    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bg.setAttribute('x', '0'); bg.setAttribute('y', '0');
+    bg.setAttribute('width', '100%'); bg.setAttribute('height', '100%');
+    bg.setAttribute('fill', 'white');
+    clone.insertBefore(bg, clone.firstChild);
+
+    const svgData = new XMLSerializer().serializeToString(clone);
+
+    // Use base64 data URI — works on Safari/iOS (blob URL does NOT work)
+    const b64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = 800;
-    canvas.height = 800;
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, 800, 800);
+    canvas.width = 800; canvas.height = 800;
+    const ctx2d = canvas.getContext('2d');
+    ctx2d.fillStyle = '#fff';
+    ctx2d.fillRect(0, 0, 800, 800);
+
     const img = new Image();
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
     img.onload = () => {
-        ctx.drawImage(img, 0, 0, 800, 800);
-        URL.revokeObjectURL(url);
-        const link = document.createElement('a');
-        link.download = `chibi-color-${currentImage ? currentImage.id : 'art'}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        try {
+            ctx2d.drawImage(img, 0, 0, 800, 800);
+            const link = document.createElement('a');
+            link.download = `chibi-${currentImage ? currentImage.id : 'art'}.png`;
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (e) {
+            // Canvas tainted fallback — download SVG directly
+            const svgLink = document.createElement('a');
+            svgLink.download = `chibi-${currentImage ? currentImage.id : 'art'}.svg`;
+            svgLink.href = b64;
+            document.body.appendChild(svgLink);
+            svgLink.click();
+            document.body.removeChild(svgLink);
+        }
         playSFX('complete');
+        showSaveToast();
     };
-    img.src = url;
+    img.onerror = () => {
+        // Direct SVG download as ultimate fallback
+        const svgLink = document.createElement('a');
+        svgLink.download = `chibi-${currentImage ? currentImage.id : 'art'}.svg`;
+        svgLink.href = b64;
+        document.body.appendChild(svgLink);
+        svgLink.click();
+        document.body.removeChild(svgLink);
+        showSaveToast();
+    };
+    img.src = b64;
+}
+
+function showSaveToast() {
+    let toast = document.getElementById('saveToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'saveToast';
+        toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#059669;color:white;padding:12px 24px;border-radius:24px;font-weight:700;font-size:16px;z-index:9999;transition:opacity 0.5s';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = '💾 Đã lưu tranh thành công!';
+    toast.style.opacity = '1';
+    setTimeout(() => { toast.style.opacity = '0'; }, 2500);
 }
 
 // ===== COMPLETION =====
