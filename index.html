@@ -92,20 +92,10 @@
     <script src="images.js"></script>
     <script src="app.js"></script>
     <script>
+        // Init playlist — NO auto-play
         MusicPlayer.init();
-        // Auto-play on first interaction
-        let musicStarted = false;
-        function tryStartMusic() {
-            if (!musicStarted) {
-                musicStarted = true;
-                MusicPlayer.play();
-                document.getElementById('musicPlayBtn').textContent = '⏸️';
-            }
-        }
-        document.addEventListener('click', tryStartMusic, { once: true });
-        document.addEventListener('touchstart', tryStartMusic, { once: true });
+
         function toggleMusic() {
-            if (!musicStarted) { tryStartMusic(); return; }
             MusicPlayer.toggle();
             document.getElementById('musicPlayBtn').textContent = MusicPlayer.isPlaying ? '⏸️' : '▶️';
         }
