@@ -1,4 +1,4 @@
-﻿/* Chibi Color Joy v3 â€” Fresh Image Library (20+ regions per image) */
+﻿/* Chibi Color Joy v3 — Fresh Image Library (20+ regions per image) */
 const S = '#333', W = 'white';
 const sv = (inner, vb = '0 0 200 200') => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
 const c = (cx, cy, r, id) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${W}" stroke="${S}" stroke-width="2" data-region="${id}"/>`;
@@ -21,9 +21,9 @@ function face(cx, cy, hr, el, er) {
 }
 
 const IMAGE_LIBRARY = {
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    /* ═══════════════════════════════════════════ */
     dinos: {
-        name: 'ðŸ¦• Khá»§ng long', images: [
+        name: '🦕 Khủng long', images: [
             /* 1: T-Rex */
             {
                 id: 'tr1', name: 'T-Rex', svg: sv(
@@ -45,7 +45,7 @@ const IMAGE_LIBRARY = {
             },
             /* 2: Triceratops */
             {
-                id: 'tc1', name: 'Khá»§ng long 3 sá»«ng', svg: sv(
+                id: 'tc1', name: 'Khủng long 3 sừng', svg: sv(
                     p('M60 50Q50 20 100 15Q150 20 140 50Z', 'frill') +
                     c(65, 40, 5, 'frillDot1') + c(100, 30, 5, 'frillDot2') + c(135, 40, 5, 'frillDot3') +
                     c(100, 65, 28, 'head') +
@@ -62,7 +62,7 @@ const IMAGE_LIBRARY = {
             },
             /* 3: Pterodactyl */
             {
-                id: 'pt1', name: 'Dá»±c long', svg: sv(
+                id: 'pt1', name: 'Dực long', svg: sv(
                     c(100, 55, 18, 'head') +
                     p('M82 45L75 25L95 42', 'crest') +
                     c(95, 50, 4, 'eyeL') + c(110, 50, 4, 'eyeR') +
@@ -79,7 +79,7 @@ const IMAGE_LIBRARY = {
             },
             /* 4: Baby Dino egg */
             {
-                id: 'de1', name: 'Trá»©ng dino', svg: sv(
+                id: 'de1', name: 'Trứng dino', svg: sv(
                     p('M60 85Q60 40 100 30Q140 40 140 85Q140 130 120 155Q100 170 80 155Q60 130 60 85Z', 'eggBottom') +
                     p('M60 85Q70 75 85 82Q100 72 115 82Q130 75 140 85', 'eggCrack') +
                     p('M60 85Q58 68 70 55Q82 45 100 40Q118 45 130 55Q142 68 140 85', 'eggTop') +
@@ -92,12 +92,12 @@ const IMAGE_LIBRARY = {
             },
         ]
     },
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    /* ═══════════════════════════════════════════ */
     robots: {
-        name: 'ðŸ¤– RÃ´ bá»‘t', images: [
+        name: '🤖 Rô bốt', images: [
             /* 5: Cute Robot */
             {
-                id: 'rb1', name: 'RÃ´ bá»‘t dá»… thÆ°Æ¡ng', svg: sv(
+                id: 'rb1', name: 'Rô bốt dễ thương', svg: sv(
                     r(80, 25, 40, 35, 'head', 8) +
                     r(88, 8, 8, 20, 'antenna', 3) + c(92, 8, 5, 'antBall') +
                     c(92, 42, 6, 'eyeL') + c(108, 42, 6, 'eyeR') +
@@ -116,7 +116,7 @@ const IMAGE_LIBRARY = {
             },
             /* 6: Drone */
             {
-                id: 'dr1', name: 'MÃ¡y bay drone', svg: sv(
+                id: 'dr1', name: 'Máy bay drone', svg: sv(
                     r(75, 70, 50, 30, 'body', 10) +
                     c(92, 85, 5, 'eyeL') + c(108, 85, 5, 'eyeR') +
                     eyes(92, 85, 108, 85, 2) +
@@ -133,7 +133,7 @@ const IMAGE_LIBRARY = {
             },
             /* 7: UFO */
             {
-                id: 'uf1', name: 'ÄÄ©a bay UFO', svg: sv(
+                id: 'uf1', name: 'Đĩa bay UFO', svg: sv(
                     p('M65 80Q65 45 100 40Q135 45 135 80Z', 'dome') +
                     c(90, 65, 5, 'eyeL') + c(110, 65, 5, 'eyeR') +
                     eyes(90, 65, 110, 65, 2) + smile(100, 76) +
@@ -146,12 +146,12 @@ const IMAGE_LIBRARY = {
             },
         ]
     },
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    /* ═══════════════════════════════════════════ */
     ocean: {
-        name: 'ðŸ™ Biá»ƒn cáº£', images: [
+        name: '🐙 Biển cả', images: [
             /* 8: Octopus */
             {
-                id: 'oc1', name: 'Báº¡ch tuá»™c vui', svg: sv(
+                id: 'oc1', name: 'Bạch tuộc vui', svg: sv(
                     c(100, 60, 32, 'head') +
                     c(88, 52, 6, 'eyeL') + c(112, 52, 6, 'eyeR') +
                     c(88, 52, 3, 'pupilL') + c(112, 52, 3, 'pupilR') +
@@ -170,7 +170,7 @@ const IMAGE_LIBRARY = {
             },
             /* 9: Shark */
             {
-                id: 'sk1', name: 'CÃ¡ máº­p baby', svg: sv(
+                id: 'sk1', name: 'Cá mập baby', svg: sv(
                     e(100, 85, 48, 28, 'body') +
                     p('M100 57L92 40L108 40Z', 'fin') +
                     p('M52 85Q38 72 32 85Q38 98 52 90', 'finL') +
@@ -186,7 +186,7 @@ const IMAGE_LIBRARY = {
             },
             /* 10: Dolphin */
             {
-                id: 'dl1', name: 'CÃ¡ heo', svg: sv(
+                id: 'dl1', name: 'Cá heo', svg: sv(
                     p('M45 80Q55 55 85 50Q100 48 120 55Q145 65 155 82Q148 95 130 100Q110 105 90 102Q65 100 50 95Q42 90 45 80Z', 'body') +
                     p('M90 102Q85 90 75 98Q72 108 82 108', 'flipperL') +
                     p('M130 100Q145 95 150 105Q145 115 135 108', 'flipperR') +
@@ -201,7 +201,7 @@ const IMAGE_LIBRARY = {
             },
             /* 11: Jellyfish */
             {
-                id: 'jf1', name: 'Sá»©a biá»ƒn', svg: sv(
+                id: 'jf1', name: 'Sứa biển', svg: sv(
                     p('M50 75Q50 35 100 30Q150 35 150 75Z', 'bell') +
                     c(88, 55, 5, 'eyeL') + c(112, 55, 5, 'eyeR') +
                     eyes(88, 55, 112, 55, 2) + smile(100, 66) +
@@ -218,12 +218,12 @@ const IMAGE_LIBRARY = {
             },
         ]
     },
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    /* ═══════════════════════════════════════════ */
     heroes: {
-        name: 'âš”ï¸ SiÃªu nhÃ¢n', images: [
+        name: '⚔️ Siêu nhân', images: [
             /* 12: Warrior */
             {
-                id: 'wr1', name: 'Chiáº¿n binh nhá»', svg: sv(
+                id: 'wr1', name: 'Chiến binh nhỏ', svg: sv(
                     e(100, 32, 18, 14, 'helmet') + r(88, 38, 24, 10, 'visor', 3) +
                     face(100, 55, 18, 7, 7) +
                     p('M100 20L95 8L105 8Z', 'crest') +
@@ -239,7 +239,7 @@ const IMAGE_LIBRARY = {
             },
             /* 13: Wizard */
             {
-                id: 'wz1', name: 'PhÃ¹ thá»§y bÃ©', svg: sv(
+                id: 'wz1', name: 'Phù thủy bé', svg: sv(
                     p('M72 42L100 2L128 42Z', 'hat') +
                     c(100, 18, 5, 'hatStar') +
                     p('M64 42Q100 36 136 42', 'hatBrim') +
@@ -254,7 +254,7 @@ const IMAGE_LIBRARY = {
             },
             /* 14: Ninja */
             {
-                id: 'nj1', name: 'Ninja nhÃ­', svg: sv(
+                id: 'nj1', name: 'Ninja nhí', svg: sv(
                     c(100, 48, 22, 'head') +
                     r(80, 40, 40, 12, 'mask', 3) +
                     c(92, 46, 5, 'eyeL') + c(108, 46, 5, 'eyeR') +
@@ -271,12 +271,12 @@ const IMAGE_LIBRARY = {
             },
         ]
     },
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    /* ═══════════════════════════════════════════ */
     sweets: {
-        name: 'ðŸ© BÃ¡nh ngá»t', images: [
+        name: '🍩 Bánh ngọt', images: [
             /* 15: Donut */
             {
-                id: 'dn1', name: 'BÃ¡nh donut', svg: sv(
+                id: 'dn1', name: 'Bánh donut', svg: sv(
                     p('M100 25Q155 25 165 75Q175 125 155 155Q135 180 100 180Q65 180 45 155Q25 125 35 75Q45 25 100 25Z', 'dough') +
                     p('M100 40Q140 40 148 72Q155 105 142 130Q128 152 100 152Q72 152 58 130Q45 105 52 72Q60 40 100 40Z', 'icing') +
                     c(100, 100, 22, 'hole') +
@@ -289,7 +289,7 @@ const IMAGE_LIBRARY = {
             },
             /* 16: Cupcake */
             {
-                id: 'cc1', name: 'BÃ¡nh cupcake', svg: sv(
+                id: 'cc1', name: 'Bánh cupcake', svg: sv(
                     p('M60 105Q60 68 75 55Q88 45 100 42Q112 45 125 55Q140 68 140 105Z', 'cream') +
                     p('M60 105L55 170Q55 178 100 178Q145 178 145 170L140 105Z', 'cup') +
                     c(100, 38, 5, 'cherry') + p('M98 38L96 30', 'stem') +
@@ -304,7 +304,7 @@ const IMAGE_LIBRARY = {
             },
             /* 17: Ice cream */
             {
-                id: 'ic1', name: 'Kem á»‘c quáº¿', svg: sv(
+                id: 'ic1', name: 'Kem ốc quế', svg: sv(
                     c(100, 52, 26, 'scoop1') +
                     c(80, 72, 22, 'scoop2') + c(120, 72, 22, 'scoop3') +
                     c(92, 45, 5, 'eyeL') + c(108, 45, 5, 'eyeR') +
@@ -319,7 +319,7 @@ const IMAGE_LIBRARY = {
             },
             /* 18: Lollipop */
             {
-                id: 'lp1', name: 'Káº¹o mÃºt', svg: sv(
+                id: 'lp1', name: 'Kẹo mút', svg: sv(
                     c(100, 62, 38, 'candy') +
                     p('M100 62Q115 50 120 62Q115 75 100 62', 'swirl1') +
                     p('M100 62Q85 50 80 62Q85 75 100 62', 'swirl2') +
@@ -333,12 +333,12 @@ const IMAGE_LIBRARY = {
             },
         ]
     },
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    /* ═══════════════════════════════════════════ */
     cosmos: {
-        name: 'ðŸª VÅ© trá»¥ má»›i', images: [
+        name: '🪐 Vũ trụ mới', images: [
             /* 19: Planet */
             {
-                id: 'pl1', name: 'HÃ nh tinh', svg: sv(
+                id: 'pl1', name: 'Hành tinh', svg: sv(
                     c(100, 90, 42, 'planet') +
                     e(100, 90, 68, 14, 'ring', `rotate(-15 100 90)`) +
                     e(100, 90, 58, 10, 'ringInner', `rotate(-15 100 90)`) +
@@ -352,7 +352,7 @@ const IMAGE_LIBRARY = {
             },
             /* 20: Moon */
             {
-                id: 'mn1', name: 'Máº·t trÄƒng', svg: sv(
+                id: 'mn1', name: 'Mặt trăng', svg: sv(
                     c(100, 90, 40, 'moon') +
                     c(85, 75, 8, 'crater1') + c(115, 85, 6, 'crater2') + c(95, 108, 7, 'crater3') + c(108, 68, 5, 'crater4') +
                     c(88, 82, 5, 'eyeL') + c(108, 82, 5, 'eyeR') +
@@ -364,7 +364,7 @@ const IMAGE_LIBRARY = {
             },
             /* 21: Comet */
             {
-                id: 'cm1', name: 'Sao chá»•i', svg: sv(
+                id: 'cm1', name: 'Sao chổi', svg: sv(
                     c(135, 65, 22, 'head') +
                     c(128, 58, 5, 'eyeL') + c(142, 58, 5, 'eyeR') +
                     eyes(128, 58, 142, 58, 2) + smile(135, 72) +
@@ -379,12 +379,12 @@ const IMAGE_LIBRARY = {
             },
         ]
     },
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    /* ═══════════════════════════════════════════ */
     party: {
-        name: 'ðŸŽ Lá»… há»™i', images: [
+        name: '🎁 Lễ hội', images: [
             /* 22: Gift box */
             {
-                id: 'gb1', name: 'QuÃ  táº·ng', svg: sv(
+                id: 'gb1', name: 'Quà tặng', svg: sv(
                     r(55, 65, 90, 80, 'box', 5) +
                     r(55, 65, 90, 18, 'lid', 5) +
                     r(95, 65, 10, 80, 'ribbonV') + r(55, 95, 90, 10, 'ribbonH') +
@@ -399,7 +399,7 @@ const IMAGE_LIBRARY = {
             },
             /* 23: Balloon */
             {
-                id: 'bl1', name: 'BÃ³ng bay', svg: sv(
+                id: 'bl1', name: 'Bóng bay', svg: sv(
                     e(70, 55, 24, 30, 'balloon1') +
                     e(100, 48, 22, 28, 'balloon2') +
                     e(130, 55, 24, 30, 'balloon3') +
@@ -410,9 +410,9 @@ const IMAGE_LIBRARY = {
                     p('M85 140Q100 148 115 140', 'knot')
                 )
             },
-            /* 24: PiÃ±ata */
+            /* 24: Piñata */
             {
-                id: 'pi1', name: 'PiÃ±ata', svg: sv(
+                id: 'pi1', name: 'Piñata', svg: sv(
                     p('M80 35Q60 55 58 80Q56 105 70 130L130 130Q144 105 142 80Q140 55 120 35Z', 'body') +
                     r(92, 15, 16, 22, 'hook', 4) +
                     c(88, 72, 5, 'eyeL') + c(112, 72, 5, 'eyeR') +
